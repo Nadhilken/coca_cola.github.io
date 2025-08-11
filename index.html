@@ -1,1 +1,2905 @@
-<h1>hi hello</h1> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>CocolaBot - AI Voice Assistant</title>
+  <meta name="description" content="CocolaBot - Advanced AI Voice Assistant with Ad Management" />
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#b30000">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --brand-primary: #b30000;
+      --brand-secondary: #590000;
+      --brand-accent: #dc2626;
+      --brand-glow: #ef4444;
+      --glass-bg: rgba(255, 255, 255, 0.1);
+      --glass-border: rgba(255, 255, 255, 0.2);
+      --glass-hover: rgba(255, 255, 255, 0.2);
+      --text-primary: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.7);
+      --text-accent: rgba(255, 255, 255, 0.9);
+      --shadow-glow: 0 0 40px rgba(239, 68, 68, 0.4);
+      --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.2);
+      --backdrop-blur: blur(10px);
+      --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      --radius: 12px;
+      --radius-lg: 16px;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-user-select: none;
+      user-select: none;
+      touch-action: manipulation;
+      position: relative;
+    }
+
+    /* Background Image Overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('https://raw.githubusercontent.com/Nadhilken/mallar/refs/heads/main/1630669980286-removebg-preview.png?token=GHSAT0AAAAAADHLCICDDALXADD3BLEPQCCE2EXRUZQ');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0.1;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: var(--backdrop-blur);
+      -webkit-backdrop-filter: var(--backdrop-blur);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-glass);
+    }
+
+    .glass-hover {
+      transition: var(--transition-smooth);
+    }
+
+    .glass-hover:hover {
+      background: var(--glass-hover);
+      transform: scale(1.02);
+    }
+
+    .glass-hover:active {
+      transform: scale(0.98);
+    }
+
+    .main-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .logo {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      width: 12rem;
+      height: auto;
+      z-index: 10;
+    }
+
+    .menu-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border: none;
+      border-radius: var(--radius);
+      color: var(--text-primary);
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .interface {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 2rem;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .interface.hidden {
+      opacity: 0;
+      transform: scale(0.95);
+      pointer-events: none;
+    }
+
+    .interface.active {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: all;
+    }
+
+    .ad-container {
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: var(--transition-smooth);
+      box-shadow: var(--shadow-glow);
+      animation: pulse-glow 3s ease-in-out infinite;
+      max-width: 90vw;
+      max-height: 60vh;
+    }
+
+    .ad-container img,
+    .ad-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .ad-placeholder {
+      width: 400px;
+      height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--text-muted);
+      border-radius: var(--radius-lg);
+    }
+
+    .voice-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 4rem;
+      max-width: 90vw;
+      flex-wrap: wrap;
+      position: relative;
+    }
+
+    .assistant-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      max-width: 400px;
+    }
+
+    .assistant-avatar {
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      border-radius: var(--radius-lg);
+      max-width: 400px;
+      width: 100%;
+      height: auto;
+    }
+
+    .assistant-avatar:hover {
+      transform: scale(1.05);
+    }
+
+    .assistant-avatar.listening,
+    .assistant-avatar.speaking {
+      animation: siri-beat 0.3s ease-in-out infinite alternate;
+    }
+
+    .greeting-text {
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius);
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      text-align: center;
+      max-width: 400px;
+      min-height: 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      word-break: break-word;
+    }
+
+    .greeting-text.typing::after {
+      content: '|';
+      animation: typing-cursor 0.7s infinite;
+    }
+
+    .status-indicator {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius);
+      font-family: 'Courier New', monospace;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: right;
+      max-width: 200px;
+      z-index: 10;
+    }
+
+    .status-indicator.processing::after {
+      content: '.';
+      animation: dots 1s steps(3, end) infinite;
+    }
+
+    .btn {
+      padding: 0.75rem 2rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border: none;
+      border-radius: var(--radius);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      background: transparent;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .back-btn {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+
+    .card {
+      width: 150px;
+      height: 200px;
+      border-radius: 30px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: var(--backdrop-blur);
+      -webkit-backdrop-filter: var(--backdrop-blur);
+      box-shadow: var(--shadow-glass);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+
+    .card:hover {
+      background: var(--glass-hover);
+      transform: scale(1.05);
+    }
+
+    .card:active {
+      transform: scale(0.98);
+    }
+
+    .card span {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-transform: uppercase;
+    }
+
+    .settings-slider {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 500px;
+      max-width: 95vw;
+      height: 100vh;
+      padding: 1.5rem;
+      border-left: 1px solid var(--glass-border);
+      transition: right 0.3s ease;
+      z-index: 20;
+      overflow-y: auto;
+    }
+
+    .settings-slider.first-interface {
+      width: 320px;
+    }
+
+    .settings-slider.fullscreen {
+      width: 100vw;
+      max-width: 100vw;
+    }
+
+    .settings-slider.open {
+      right: 0;
+    }
+
+    .settings-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition-smooth);
+      z-index: 15;
+    }
+
+    .settings-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .settings-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .settings-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .close-btn {
+      padding: 0.5rem;
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      cursor: pointer;
+      border-radius: var(--radius);
+      transition: var(--transition-smooth);
+    }
+
+    .close-btn:hover {
+      background: var(--glass-hover);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      background: var(--glass-bg);
+      color: var(--text-primary);
+      font-size: 0.9rem;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--brand-accent);
+    }
+
+    .form-note {
+      margin-top: 0.5rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .file-list {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .file-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      border-radius: var(--radius);
+      background: var(--glass-bg);
+      font-size: 0.8rem;
+    }
+
+    .file-name {
+      flex: 1;
+      margin-right: 0.5rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .delete-btn {
+      padding: 0.25rem 0.5rem;
+      background: rgba(220, 38, 38, 0.5);
+      border: none;
+      border-radius: 4px;
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: 0.7rem;
+      transition: var(--transition-smooth);
+    }
+
+    .delete-btn:hover {
+      background: rgba(220, 38, 38, 0.7);
+    }
+
+    .download-btn {
+      padding: 0.25rem 0.5rem;
+      background: rgba(34, 197, 94, 0.5);
+      border: none;
+      border-radius: 4px;
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: 0.7rem;
+      transition: var(--transition-smooth);
+      margin-right: 0.5rem;
+    }
+
+    .download-btn:hover {
+      background: rgba(34, 197, 94, 0.7);
+    }
+
+    .slider-control {
+      width: 100%;
+      margin: 0.5rem 0;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 4px;
+      background: var(--glass-bg);
+      border-radius: 2px;
+      outline: none;
+    }
+
+    .slider-control::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      background: var(--text-primary);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .slider-control::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      background: var(--text-primary);
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+    }
+
+    .social-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      max-width: 90vw;
+      flex-wrap: wrap;
+    }
+
+    .social-card {
+      width: 120px;
+      height: 120px;
+      border-radius: var(--radius);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: var(--backdrop-blur);
+      box-shadow: var(--shadow-glass);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+
+    .social-card:hover {
+      background: var(--glass-hover);
+      transform: scale(1.05);
+    }
+
+    .social-card:active {
+      transform: scale(0.98);
+    }
+
+    .social-card img {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+    }
+
+    .qr-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.5rem;
+      border-radius: var(--radius-lg);
+      background: var(--glass-bg);
+      backdrop-filter: var(--backdrop-blur);
+      box-shadow: var(--shadow-glass);
+      max-width: 300px;
+    }
+
+    .qr-title {
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    /* Admin Panel Feature Buttons */
+    .admin-features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .admin-feature-btn {
+      padding: 1rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .admin-feature-btn:hover {
+      background: var(--glass-hover);
+      transform: translateY(-2px);
+    }
+
+    .admin-feature-btn.active {
+      background: var(--brand-accent);
+      border-color: var(--brand-glow);
+    }
+
+    .admin-feature-content {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .admin-feature-content.active {
+      display: block;
+    }
+
+    .save-all-btn {
+      position: sticky;
+      bottom: 1rem;
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(45deg, var(--brand-accent), var(--brand-glow));
+      border: none;
+      border-radius: var(--radius);
+      color: var(--text-primary);
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      margin-top: 2rem;
+    }
+
+    .save-all-btn:hover {
+      background: linear-gradient(45deg, var(--brand-glow), #ff4444);
+      transform: translateY(-2px);
+    }
+
+    /* Register Form Modal Styles */
+    .register-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition-smooth);
+    }
+
+    .register-modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .register-form-container {
+      background: var(--glass-bg);
+      backdrop-filter: var(--backdrop-blur);
+      border: 2px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-glass);
+      transform: scale(0.9);
+      transition: var(--transition-smooth);
+    }
+
+    .register-modal.active .register-form-container {
+      transform: scale(1);
+    }
+
+    .register-title {
+      color: var(--text-primary);
+      font-size: 1.8rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+    }
+
+    .register-form .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .register-form .form-label {
+      color: var(--text-accent);
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .register-form .form-input,
+    .register-form .form-textarea {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--glass-border);
+      color: var(--text-primary);
+      padding: 1rem;
+      border-radius: var(--radius);
+      transition: var(--transition-smooth);
+      cursor: pointer;
+    }
+
+    .register-form .form-input:focus,
+    .register-form .form-textarea:focus {
+      outline: none;
+      border-color: var(--brand-accent);
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+    }
+
+    .register-form .form-input::placeholder,
+    .register-form .form-textarea::placeholder {
+      color: var(--text-muted);
+    }
+
+    .register-form .form-textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .voice-input-indicator {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--brand-accent);
+      font-size: 1.2rem;
+      opacity: 0;
+      transition: var(--transition-smooth);
+    }
+
+    .voice-input-indicator.active {
+      opacity: 1;
+      animation: pulse 1s infinite;
+    }
+
+    .register-form-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(45deg, var(--brand-accent), var(--brand-glow));
+      border: 1px solid var(--brand-glow);
+      color: var(--text-primary);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(45deg, var(--brand-glow), #ff4444);
+      box-shadow: 0 8px 25px rgba(239, 68, 68, 0.6);
+    }
+
+    .btn-secondary {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      color: var(--text-primary);
+    }
+
+    .btn-secondary:hover {
+      background: var(--glass-hover);
+      border-color: var(--glass-border);
+    }
+
+    /* Success Message Styles */
+    .success-message {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      background: linear-gradient(45deg, #10b981, #059669);
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-glass);
+      z-index: 2000;
+      transform: translateX(100%);
+      transition: var(--transition-smooth);
+    }
+
+    .success-message.show {
+      transform: translateX(0);
+    }
+
+    @keyframes siri-beat {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.9; }
+      100% { transform: scale(1.05); opacity: 0.95; }
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(239, 68, 68, 0.6); }
+    }
+
+    @keyframes typing-cursor {
+      50% { opacity: 0; }
+    }
+
+    @keyframes dots {
+      0% { content: '.'; }
+      33% { content: '..'; }
+      66% { content: '...'; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+      .main-container { padding: 1rem; }
+      .logo { width: 8rem; }
+      .menu-btn { padding: 0.5rem 1rem; font-size: 0.8rem; }
+      .btn { padding: 0.5rem 1.5rem; font-size: 0.8rem; }
+      .ad-placeholder { width: 300px; height: 225px; }
+      .assistant-avatar { max-width: 300px; }
+      .greeting-text { max-width: 300px; font-size: 0.8rem; }
+      .status-indicator { max-width: 150px; font-size: 0.75rem; }
+      .card { width: 120px; height: 160px; }
+      .card span { font-size: 1rem; }
+      .voice-container { gap: 2rem; }
+      .social-container { gap: 1.5rem; }
+      .social-card { width: 100px; height: 100px; }
+      .social-card img { width: 50px; height: 50px; }
+      .qr-container { max-width: 250px; }
+      .register-form-container { padding: 1.5rem; }
+      .register-title { font-size: 1.5rem; }
+      .admin-features-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      .main-container { padding: 0.5rem; }
+      .logo { width: 6rem; }
+      .menu-btn { padding: 0.4rem 0.8rem; font-size: 0.75rem; }
+      .btn { padding: 0.4rem 1rem; font-size: 0.75rem; }
+      .ad-placeholder { width: 250px; height: 187px; }
+      .assistant-avatar { max-width: 250px; }
+      .greeting-text { max-width: 250px; font-size: 0.75rem; }
+      .settings-slider { width: 100%; padding: 1rem; }
+      .card { width: 100px; height: 140px; }
+      .card span { font-size: 0.9rem; }
+      .voice-container { flex-direction: column; gap: 1rem; }
+      .social-container { gap: 1rem; }
+      .social-card { width: 80px; height: 80px; }
+      .social-card img { width: 40px; height: 40px; }
+      .qr-container { max-width: 200px; }
+      .register-form-container { padding: 1rem; }
+      .register-title { font-size: 1.3rem; }
+      .register-form-actions { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <img 
+    src="https://ik.imagekit.io/hyblsnnga/logo.png?updatedAt=1754473001068" 
+    alt="CocolaBot Logo" 
+    class="logo"
+  />
+  
+  <button class="menu-btn glass glass-hover" onclick="toggleSettings()">
+    Menu
+  </button>
+
+  <div class="settings-overlay" id="settingsOverlay" onclick="closeSettings()"></div>
+
+  <div class="settings-slider glass" id="settingsSlider">
+    <div id="firstInterfaceSettings">
+      <div class="settings-header">
+        <h3 class="settings-title">Settings</h3>
+        <button class="close-btn" onclick="closeSettings()">✕</button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="fileUpload">Upload Ad Files (Images/Videos)</label>
+        <input 
+          type="file" 
+          id="fileUpload" 
+          class="form-input" 
+          accept="image/*,video/*" 
+          multiple 
+          onchange="handleFileUpload(event)"
+        />
+        <div class="form-note">Files are saved persistently in browser storage.</div>
+      </div>
+
+      <div class="form-group" id="fileListGroup" style="display: none;">
+        <label class="form-label">Uploaded Files</label>
+        <div class="file-list" id="fileList"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="timerSlider">
+          Slideshow Timer: <span id="timerValue">5</span> seconds
+        </label>
+        <input 
+          type="range" 
+          id="timerSlider" 
+          class="slider-control" 
+          min="1" 
+          max="30" 
+          value="5" 
+          oninput="updateTimer(this.value)"
+        />
+      </div>
+
+      <button class="btn glass glass-hover" onclick="closeSettings()" style="width: 100%;">
+        Done
+      </button>
+    </div>
+
+    <div id="secondInterfaceMenu" style="display: none;">
+      <div class="settings-header">
+        <h3 class="settings-title">Menu</h3>
+        <button class="close-btn" onclick="closeSettings()">✕</button>
+      </div>
+      
+      <button class="btn glass glass-hover menu-option" onclick="showAboutRobot()" style="width: 100%; margin-bottom: 0.5rem;">
+        About Robot
+      </button>
+      
+      <button class="btn glass glass-hover menu-option" onclick="showAdminLogin()" style="width: 100%; margin-bottom: 1rem;">
+        Admin
+      </button>
+
+      <button class="btn glass glass-hover" onclick="closeSettings()" style="width: 100%;">
+        Back
+      </button>
+    </div>
+
+    <div id="adminLogin" style="display: none;">
+      <div class="settings-header">
+        <h3 class="settings-title">Admin Login</h3>
+        <button class="close-btn" onclick="showSecondInterfaceMenu()">←</button>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input type="text" id="adminUsername" class="form-input" placeholder="Enter username" />
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" id="adminPassword" class="form-input" placeholder="Enter password" />
+      </div>
+      
+      <button class="btn glass glass-hover" onclick="handleAdminLogin()" style="width: 100%; margin-bottom: 0.5rem;">
+        Login
+      </button>
+      
+      <button class="btn glass glass-hover" onclick="showSecondInterfaceMenu()" style="width: 100%;">
+        Back
+      </button>
+    </div>
+
+    <div id="adminPanel" style="display: none;">
+      <div class="settings-header">
+        <h3 class="settings-title">Admin Panel</h3>
+        <button class="close-btn" onclick="showSecondInterfaceMenu()">←</button>
+      </div>
+      
+      <div class="admin-features-grid">
+        <button class="admin-feature-btn" onclick="showAdminFeature('robot')" id="robotBtn">
+          Robot Settings
+        </button>
+        <button class="admin-feature-btn" onclick="showAdminFeature('social')" id="socialBtn">
+          Social Media
+        </button>
+        <button class="admin-feature-btn" onclick="showAdminFeature('qa')" id="qaBtn">
+          Custom Q&A
+        </button>
+        <button class="admin-feature-btn" onclick="showAdminFeature('users')" id="usersBtn">
+          Registered Users
+        </button>
+      </div>
+
+       Robot Settings Feature 
+      <div id="robotFeature" class="admin-feature-content">
+        <div class="form-group">
+          <label class="form-label">Robot Name</label>
+          <input type="text" id="robotName" class="form-input" value="CocolaBot" />
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Purpose</label>
+          <textarea id="robotPurpose" class="form-input" style="height: 60px; resize: none;">AI Assistant designed to help users with various tasks and questions.</textarea>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Chat History Context</label>
+          <textarea id="chatHistory" class="form-input" style="height: 80px; resize: none;" placeholder="Enter context for conversations..."></textarea>
+        </div>
+      </div>
+
+       Social Media Feature 
+      <div id="socialFeature" class="admin-feature-content">
+        <div class="form-group">
+          <label class="form-label">Social Media Links</label>
+          <input type="url" id="instagramLink" class="form-input" placeholder="Instagram URL" />
+          <input type="url" id="facebookLink" class="form-input" placeholder="Facebook URL" style="margin-top: 0.5rem;" />
+          <input type="url" id="googleMapsLink" class="form-input" placeholder="Google Maps URL" style="margin-top: 0.5rem;" />
+          <input type="url" id="youtubeLink" class="form-input" placeholder="YouTube URL" style="margin-top: 0.5rem;" />
+        </div>
+      </div>
+
+       Custom Q&A Feature 
+      <div id="qaFeature" class="admin-feature-content">
+        <div class="form-group">
+          <label class="form-label">Custom Q&A</label>
+          <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <input type="text" id="newQuestion" class="form-input" placeholder="Question" style="flex: 1;" />
+            <button class="btn glass glass-hover" onclick="addCustomQA()" style="padding: 0.5rem;">Add</button>
+          </div>
+          <textarea id="newAnswer" class="form-input" style="height: 60px; resize: none;" placeholder="Answer"></textarea>
+          <div id="customQAList" style="max-height: 200px; overflow-y: auto; margin-top: 0.5rem;"></div>
+        </div>
+      </div>
+
+       Registered Users Feature 
+      <div id="usersFeature" class="admin-feature-content">
+        <div class="form-group">
+          <label class="form-label">Registered Users</label>
+          <div id="registeredUsersList" style="max-height: 300px; overflow-y: auto;"></div>
+        </div>
+      </div>
+
+      <button class="save-all-btn" onclick="saveAllAdminSettings()">
+        Save All Changes
+      </button>
+    </div>
+
+    <div id="aboutRobotPanel" style="display: none; background: #000; color: #fff; border-radius: var(--radius-lg);">
+      <div class="settings-header" style="background: #111; margin: -1.5rem -1.5rem 1rem -1.5rem; padding: 1rem 1.5rem; border-radius: var(--radius-lg) var(--radius-lg) 0 0;">
+        <h3 class="settings-title">About Robot</h3>
+        <button class="close-btn" onclick="showSecondInterfaceMenu()">←</button>
+      </div>
+      
+      <div style="display: flex; gap: 1rem;">
+        <div id="robotInfo" style="flex: 1; font-size: 0.9rem; line-height: 1.8;">
+          <h4 style="color: #ff4444; margin-bottom: 1rem; font-size: 1.1rem;">Robot Specifications</h4>
+          <ul style="list-style: none; padding: 0;">
+            <li style="margin-bottom: 0.8rem;">• <strong>Name:</strong> <span id="displayRobotName">CocolaBot</span></li>
+            <li style="margin-bottom: 0.8rem;">• <strong>Purpose:</strong> <span id="displayRobotPurpose">AI Assistant designed to help users with various tasks and questions.</span></li>
+            <li style="margin-bottom: 0.8rem;">• <strong>Version:</strong> 1.0.0</li>
+            <li style="margin-bottom: 0.8rem;">• <strong>Created By:</strong> RoboMiracle</li>
+            <li style="margin-bottom: 0.8rem;">• <strong>Location:</strong> Coimbatore, India</li>
+            <li style="margin-bottom: 0.8rem;">• <strong>Technology:</strong> AI-Powered Voice Assistant</li>
+            <li style="margin-bottom: 0.8rem;">• <strong>Language:</strong> English</li>
+            <li style="margin-bottom: 0.8rem;">• <strong>Platform:</strong> Web-based</li>
+            <li style="margin-bottom: 0.8rem;">• <strong>Launch Year:</strong> 2025</li>
+          </ul>
+        </div>
+        
+        <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+          <h4 style="color: #ff4444; margin-bottom: 1rem; font-size: 1.1rem;">360° Robot View</h4>
+          <div style="width: 200px; height: 200px; border: 2px solid #ff4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: linear-gradient(45deg, #111, #333);">
+            <img 
+              src="https://ik.imagekit.io/hyblsnnga/cola.gif?updatedAt=1754473024853" 
+              alt="Robot 360 View" 
+              style="width: 180px; height: 180px; border-radius: 50%; object-fit: cover;"
+            />
+          </div>
+          <p style="text-align: center; margin-top: 1rem; font-size: 0.8rem; color: #ccc;">Interactive 360° Robot Visualization</p>
+        </div>
+      </div>
+      
+      <button class="btn glass glass-hover" onclick="showSecondInterfaceMenu()" style="width: 100%; margin-top: 1rem; background: #ff4444; color: #fff;">
+        Back
+      </button>
+    </div>
+  </div>
+
+   Register Form Modal 
+  <div class="register-modal" id="registerModal">
+    <div class="register-form-container">
+      <h2 class="register-title">User Registration</h2>
+      <form class="register-form" id="registerForm">
+        <div class="form-group">
+          <label class="form-label" for="userName">Full Name</label>
+          <input 
+            type="text" 
+            id="userName" 
+            class="form-input voice-input" 
+            placeholder="Click to speak your name" 
+            data-voice-prompt="Please say your name"
+            required 
+            readonly
+          />
+          <div class="voice-input-indicator" id="nameIndicator">🎤</div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="userPhone">Phone Number</label>
+          <input 
+            type="tel" 
+            id="userPhone" 
+            class="form-input voice-input" 
+            placeholder="Click to speak your phone number" 
+            data-voice-prompt="Please say your phone number"
+            required 
+            readonly
+          />
+          <div class="voice-input-indicator" id="phoneIndicator">🎤</div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="userDescription">Description</label>
+          <textarea 
+            id="userDescription" 
+            class="form-textarea voice-input" 
+            placeholder="Click to speak your description" 
+            data-voice-prompt="Please say your description"
+            required
+            readonly
+          ></textarea>
+          <div class="voice-input-indicator" id="descriptionIndicator">🎤</div>
+        </div>
+        
+        <div class="register-form-actions">
+          <button type="submit" class="btn btn-primary glass-hover">
+            Register
+          </button>
+          <button type="button" class="btn btn-secondary glass-hover" onclick="closeRegisterModal()">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <div class="interface active" id="firstInterface">
+      <div class="ad-container glass" id="adContainer">
+        <div class="ad-placeholder">
+          <p>Upload ad files to display slideshow</p>
+        </div>
+      </div>
+      <button class="btn glass glass-hover" onclick="switchToVoice()">
+        Enter
+      </button>
+    </div>
+
+    <div class="interface hidden" id="secondInterface">
+      <div class="voice-container">
+        <div class="card glass glass-hover" onclick="handleSocialMedia()">
+          <span>Social Media</span>
+        </div>
+        <div class="assistant-container">
+          <img 
+            id="assistantAvatar"
+            src="https://ik.imagekit.io/hyblsnnga/cola.gif?updatedAt=1754473024853" 
+            alt="CocolaBot Assistant" 
+            class="assistant-avatar"
+            onclick="toggleVoiceRecognition()"
+          />
+          <div class="greeting-text glass" id="greetingText" style="display: none;"></div>
+          
+          <div class="input-container glass" style="display: flex; gap: 0.5rem; width: 100%; max-width: 400px; padding: 0.75rem;">
+            <input 
+              type="text" 
+              id="textInput" 
+              placeholder="Type your question here..." 
+              class="form-input" 
+              style="flex: 1; margin: 0; border: none; background: rgba(255,255,255,0.1);"
+              onkeypress="handleTextInputKeyPress(event)"
+            />
+            <button 
+              id="sendBtn" 
+              onclick="handleTextInput()"
+              class="btn glass glass-hover" 
+              style="padding: 0.5rem 1rem; margin: 0; white-space: nowrap;"
+            >
+              Send
+            </button>
+          </div>
+        </div>
+        <div class="card glass glass-hover" onclick="handleRegister()">
+          <span>Register</span>
+        </div>
+      </div>
+      <button class="btn glass glass-hover back-btn" onclick="switchToAds()">
+        Back
+      </button>
+    </div>
+
+    <div class="interface hidden" id="socialInterface">
+      <div class="social-container">
+        <div class="social-card glass glass-hover" onclick="generateQRCode('instagram')">
+          <img src="https://img.freepik.com/premium-vector/stunning-modern-glass-morphism-instagram-icon-with-vibrant-background_462839-6545.jpg" alt="Instagram" />
+        </div>
+        <div class="social-card glass glass-hover" onclick="generateQRCode('facebook')">
+          <img src="https://melekare.ca/wp-content/uploads/2021/10/097232-3d-transparent-glass-icon-social-media-logos-facebook-logo-square-300x300-1.png" alt="Facebook" />
+        </div>
+        <div class="social-card glass glass-hover" onclick="generateQRCode('googleMaps')">
+          <img src="https://atlas-content-cdn.pixelsquid.com/assets_v2/319/3192541233582970078/jpeg-600/G03.jpg?modifiedAt=1" alt="Google Maps" />
+        </div>
+        <div class="social-card glass glass-hover" onclick="generateQRCode('youtube')">
+          <img src="https://img.freepik.com/premium-vector/stunning-modern-glass-morphism-youtube-icon-with-vibrant-background_462839-6546.jpg" alt="YouTube" />
+        </div>
+      </div>
+      <div id="qrContainer" class="qr-container glass" style="display: none;">
+        <div class="qr-title" id="qrTitle"></div>
+        <div id="qrCode"></div>
+        <button class="btn glass glass-hover" onclick="backToSocial()">Back</button>
+      </div>
+      <button class="btn glass glass-hover back-btn" onclick="switchToVoice()">
+        Back
+      </button>
+    </div>
+
+    <div class="status-indicator glass" id="statusIndicator">Ready to assist</div>
+  </div>
+
+  <script>
+    // Global state
+    let currentInterface = 'first';
+    let adFiles = [];
+    let currentAdIndex = 0;
+    let slideshowInterval = null;
+    let slideshowTimer = 5;
+    let isListening = false;
+    let isSpeaking = false;
+    let recognition = null;
+    let recognitionTimeout = null;
+    let voiceInputField = null;
+    let db = null;
+    let useFallbackStorage = false;
+    let isDbOpening = false;
+    let currentAdminFeature = null;
+    let voiceRecognition = null;
+    let currentVoiceInput = null;
+    let fallbackStorage = {
+      adFiles: [],
+      robotData: null,
+      customQA: [],
+      socialLinks: {
+        instagram: '',
+        facebook: '',
+        googleMaps: '',
+        youtube: ''
+      },
+      registeredUsers: []
+    };
+
+    // Gemini API Configuration
+    const GEMINI_API_KEY = 'AIzaSyBPMD2Tt-g_E7E9GqiWZWsHPWb198Kx9XE';
+    const GEMINI_API_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+
+    // IndexedDB setup
+    const dbName = 'CocolaBotDB';
+    const dbVersion = 6;
+    const storeName = 'adFiles';
+    const robotStoreName = 'robotData';
+    const qaStoreName = 'customQA';
+    const socialStoreName = 'socialLinks';
+    const usersStoreName = 'registeredUsers';
+    
+    let customQAList = [];
+    let robotData = {
+      name: 'CocolaBot',
+      purpose: 'AI Assistant designed to help users with various tasks and questions.',
+      chatHistory: ''
+    };
+    let socialLinks = {
+      instagram: '',
+      facebook: '',
+      googleMaps: '',
+      youtube: ''
+    };
+    let registeredUsers = [];
+
+    function initDB() {
+      if (!window.indexedDB) {
+        console.warn('IndexedDB not supported. Using in-memory fallback storage.');
+        useFallbackStorage = true;
+        updateStatus('Storage unavailable, using temporary storage');
+        loadFallbackData();
+        return;
+      }
+
+      if (isDbOpening) {
+        console.warn('Database operation already in progress. Waiting...');
+        return;
+      }
+
+      isDbOpening = true;
+      const request = indexedDB.open(dbName, dbVersion);
+      
+      request.onerror = function(event) {
+        isDbOpening = false;
+        const error = event.target.error;
+        console.error(`IndexedDB error: ${error.name} - ${error.message}`);
+        updateStatus(`Database error: ${error.name}`);
+        
+        if (error.name === 'VersionError') {
+          console.warn('Database version conflict detected. Attempting to resolve...');
+          deleteDatabaseAndRetry();
+        } else {
+          console.warn('Switching to fallback storage due to database error.');
+          useFallbackStorage = true;
+          loadFallbackData();
+        }
+      };
+
+      request.onupgradeneeded = function(event) {
+        try {
+          db = event.target.result;
+          if (!db.objectStoreNames.contains(storeName)) {
+            db.createObjectStore(storeName, { keyPath: 'id', autoIncrement: true });
+          }
+          if (!db.objectStoreNames.contains(robotStoreName)) {
+            db.createObjectStore(robotStoreName, { keyPath: 'key' });
+          }
+          if (!db.objectStoreNames.contains(qaStoreName)) {
+            db.createObjectStore(qaStoreName, { keyPath: 'id', autoIncrement: true });
+          }
+          if (!db.objectStoreNames.contains(socialStoreName)) {
+            db.createObjectStore(socialStoreName, { keyPath: 'key' });
+          }
+          if (!db.objectStoreNames.contains(usersStoreName)) {
+            db.createObjectStore(usersStoreName, { keyPath: 'id', autoIncrement: true });
+          }
+        } catch (error) {
+          console.error('Error during database upgrade:', error);
+          isDbOpening = false;
+          useFallbackStorage = true;
+          loadFallbackData();
+        }
+      };
+
+      request.onsuccess = function(event) {
+        db = event.target.result;
+        isDbOpening = false;
+        console.log('IndexedDB initialized successfully with version', dbVersion);
+        loadStoredFiles();
+        loadRobotData();
+        loadCustomQA();
+        loadSocialLinks();
+        loadRegisteredUsers();
+      };
+    }
+
+    function deleteDatabaseAndRetry() {
+      if (isDbOpening) {
+        console.warn('Database operation in progress. Cannot delete now.');
+        return;
+      }
+
+      isDbOpening = true;
+      const deleteRequest = indexedDB.deleteDatabase(dbName);
+      
+      deleteRequest.onsuccess = function() {
+        isDbOpening = false;
+        console.log('Database deleted successfully. Retrying initialization...');
+        initDB();
+      };
+
+      deleteRequest.onerror = function(event) {
+        isDbOpening = false;
+        console.error(`Failed to delete database: ${event.target.error.name} - ${event.target.error.message}`);
+        updateStatus('Failed to resolve database conflict');
+        useFallbackStorage = true;
+        loadFallbackData();
+      };
+
+      deleteRequest.onblocked = function() {
+        isDbOpening = false;
+        console.warn('Database deletion blocked. Please close other tabs or instances.');
+        updateStatus('Database deletion blocked. Close other tabs.');
+        useFallbackStorage = true;
+        loadFallbackData();
+      };
+    }
+
+    function loadFallbackData() {
+      adFiles = fallbackStorage.adFiles;
+      robotData = fallbackStorage.robotData || robotData;
+      customQAList = fallbackStorage.customQA;
+      socialLinks = fallbackStorage.socialLinks;
+      registeredUsers = fallbackStorage.registeredUsers;
+      updateFileList();
+      displayCurrentAd();
+      startSlideshow();
+      updateAdminPanelData();
+      updateAboutRobotDisplay();
+      updateCustomQADisplay();
+      updateSocialLinksDisplay();
+      updateRegisteredUsersDisplay();
+      updateStatus('Using temporary storage');
+    }
+
+    // Voice Recognition for Registration Form
+    function initVoiceRecognition() {
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        console.warn('Speech recognition not supported');
+        return false;
+      }
+      
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      voiceRecognition = new SpeechRecognition();
+      
+      voiceRecognition.continuous = false;
+      voiceRecognition.interimResults = false;
+      voiceRecognition.lang = 'en-US';
+      
+      voiceRecognition.onstart = function() {
+        if (currentVoiceInput) {
+          const indicator = currentVoiceInput.parentElement.querySelector('.voice-input-indicator');
+          if (indicator) indicator.classList.add('active');
+        }
+      };
+      
+      voiceRecognition.onend = function() {
+        if (currentVoiceInput) {
+          const indicator = currentVoiceInput.parentElement.querySelector('.voice-input-indicator');
+          if (indicator) indicator.classList.remove('active');
+        }
+        currentVoiceInput = null;
+      };
+      
+      voiceRecognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript.trim();
+        if (currentVoiceInput) {
+          currentVoiceInput.value = transcript;
+          currentVoiceInput.style.color = 'var(--text-primary)';
+        }
+      };
+      
+      voiceRecognition.onerror = function(event) {
+        console.error('Voice recognition error:', event.error);
+        if (currentVoiceInput) {
+          const indicator = currentVoiceInput.parentElement.querySelector('.voice-input-indicator');
+          if (indicator) indicator.classList.remove('active');
+        }
+        currentVoiceInput = null;
+      };
+      
+      return true;
+    }
+
+    function handleVoiceInput(inputElement) {
+      if (!voiceRecognition) {
+        if (!initVoiceRecognition()) {
+          alert('Voice recognition is not supported in your browser');
+          return;
+        }
+      }
+      
+      const prompt = inputElement.dataset.voicePrompt;
+      if (prompt) {
+        speakPrompt(prompt).then(() => {
+          currentVoiceInput = inputElement;
+          voiceRecognition.start();
+        });
+      }
+    }
+
+    function speakPrompt(text) {
+      return new Promise((resolve) => {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.9;
+        utterance.onend = resolve;
+        window.speechSynthesis.speak(utterance);
+      });
+    }
+
+    // Admin Panel Functions
+    function showAdminFeature(feature) {
+      // Hide all feature contents
+      const features = ['robot', 'social', 'qa', 'users'];
+      features.forEach(f => {
+        document.getElementById(f + 'Feature').classList.remove('active');
+        document.getElementById(f + 'Btn').classList.remove('active');
+      });
+      
+      // Show selected feature
+      document.getElementById(feature + 'Feature').classList.add('active');
+      document.getElementById(feature + 'Btn').classList.add('active');
+      currentAdminFeature = feature;
+    }
+
+    function saveAllAdminSettings() {
+      try {
+        saveRobotData();
+        saveSocialLinks();
+        saveChatHistory();
+        showSuccessMessage('All settings saved successfully!');
+        updateStatus('All admin settings saved');
+      } catch (error) {
+        console.error('Error saving admin settings:', error);
+        updateStatus('Error saving settings');
+      }
+    }
+
+    // Download User Data Function
+    function downloadUserData(userId) {
+      try {
+        const user = registeredUsers.find(u => u.id === userId);
+        if (!user) {
+          alert('User not found');
+          return;
+        }
+        
+        const userData = {
+          name: user.name,
+          phone: user.phone,
+          description: user.description,
+          registeredAt: user.registeredAt,
+          downloadedAt: new Date().toISOString()
+        };
+        
+        const dataStr = JSON.stringify(userData, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(dataBlob);
+        link.download = `user_${user.name.replace(/\s+/g, '_')}_${user.id}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        updateStatus(`Downloaded data for ${user.name}`);
+      } catch (error) {
+        console.error('Error downloading user data:', error);
+        updateStatus('Error downloading user data');
+      }
+    }
+
+    function loadStoredFiles() {
+      if (useFallbackStorage) {
+        adFiles = fallbackStorage.adFiles;
+        updateFileList();
+        displayCurrentAd();
+        startSlideshow();
+        return;
+      }
+
+      if (!db) {
+        console.warn('Database not initialized. Using fallback storage.');
+        useFallbackStorage = true;
+        loadFallbackData();
+        return;
+      }
+      
+      const transaction = db.transaction([storeName], 'readonly');
+      const objectStore = transaction.objectStore(storeName);
+      const request = objectStore.getAll();
+
+      request.onsuccess = function(event) {
+        adFiles = event.target.result || [];
+        updateFileList();
+        displayCurrentAd();
+        startSlideshow();
+      };
+
+      request.onerror = function(event) {
+        console.error('Error loading ad files:', event.target.error);
+        useFallbackStorage = true;
+        loadFallbackData();
+      };
+    }
+
+    function saveFile(fileData) {
+      if (useFallbackStorage) {
+        fileData.id = fallbackStorage.adFiles.length + 1;
+        fallbackStorage.adFiles.push(fileData);
+        loadStoredFiles();
+        return;
+      }
+
+      if (!db) {
+        console.warn('Database not initialized. Using fallback storage.');
+        useFallbackStorage = true;
+        fallbackStorage.adFiles.push(fileData);
+        loadStoredFiles();
+        return;
+      }
+      
+      const transaction = db.transaction([storeName], 'readwrite');
+      const objectStore = transaction.objectStore(storeName);
+      const request = objectStore.add(fileData);
+
+      request.onsuccess = function() {
+        loadStoredFiles();
+      };
+
+      request.onerror = function(event) {
+        console.error('Error saving file:', event.target.error);
+        useFallbackStorage = true;
+        fallbackStorage.adFiles.push(fileData);
+        loadStoredFiles();
+      };
+    }
+
+    function deleteFile(id) {
+      if (useFallbackStorage) {
+        fallbackStorage.adFiles = fallbackStorage.adFiles.filter(file => file.id !== id);
+        loadStoredFiles();
+        return;
+      }
+
+      if (!db) {
+        console.warn('Database not initialized. Using fallback storage.');
+        useFallbackStorage = true;
+        loadFallbackData();
+        return;
+      }
+      
+      const transaction = db.transaction([storeName], 'readwrite');
+      const objectStore = transaction.objectStore(storeName);
+      const request = objectStore.delete(id);
+
+      request.onsuccess = function() {
+        loadStoredFiles();
+      };
+
+      request.onerror = function(event) {
+        console.error('Error deleting file:', event.target.error);
+        useFallbackStorage = true;
+        loadFallbackData();
+      };
+    }
+
+    function loadSocialLinks() {
+      if (useFallbackStorage) {
+        socialLinks = fallbackStorage.socialLinks;
+        updateSocialLinksDisplay();
+        return;
+      }
+
+      if (!db) {
+        console.warn('Database not initialized. Using fallback storage.');
+        useFallbackStorage = true;
+        loadFallbackData();
+        return;
+      }
+      
+      const transaction = db.transaction([socialStoreName], 'readonly');
+      const objectStore = transaction.objectStore(socialStoreName);
+      const request = objectStore.get('socialLinks');
+
+      request.onsuccess = function(event) {
+        if (event.target.result) {
+          socialLinks = event.target.result.value;
+        } else {
+          socialLinks = { instagram: '', facebook: '', googleMaps: '', youtube: '' };
+        }
+        updateSocialLinksDisplay();
+      };
+
+      request.onerror = function(event) {
+        console.error('Error loading social links:', event.target.error);
+        updateStatus('Failed to load social links');
+        useFallbackStorage = true;
+        loadFallbackData();
+      };
+    }
+
+    function saveSocialLinks() {
+      try {
+        socialLinks.instagram = document.getElementById('instagramLink').value || '';
+        socialLinks.facebook = document.getElementById('facebookLink').value || '';
+        socialLinks.googleMaps = document.getElementById('googleMapsLink').value || '';
+        socialLinks.youtube = document.getElementById('youtubeLink').value || '';
+        
+        if (useFallbackStorage) {
+          fallbackStorage.socialLinks = { ...socialLinks };
+          updateSocialLinksDisplay();
+          return;
+        }
+
+        if (!db) {
+          console.warn('Database not initialized. Using fallback storage.');
+          useFallbackStorage = true;
+          fallbackStorage.socialLinks = { ...socialLinks };
+          updateSocialLinksDisplay();
+          return;
+        }
+        
+        const transaction = db.transaction([socialStoreName], 'readwrite');
+        const objectStore = transaction.objectStore(socialStoreName);
+        const request = objectStore.put({ key: 'socialLinks', value: socialLinks });
+
+        request.onsuccess = function() {
+          updateSocialLinksDisplay();
+        };
+
+        request.onerror = function(event) {
+          console.error('Error saving social links:', event.target.error);
+          updateStatus('Failed to save social links');
+          useFallbackStorage = true;
+          fallbackStorage.socialLinks = { ...socialLinks };
+          updateSocialLinksDisplay();
+        };
+      } catch (error) {
+        console.error('Unexpected error saving social links:', error);
+        updateStatus('Error saving social links');
+        useFallbackStorage = true;
+        fallbackStorage.socialLinks = { ...socialLinks };
+        updateSocialLinksDisplay();
+      }
+    }
+
+    function updateSocialLinksDisplay() {
+      try {
+        const instagramInput = document.getElementById('instagramLink');
+        const facebookInput = document.getElementById('facebookLink');
+        const googleMapsInput = document.getElementById('googleMapsLink');
+        const youtubeInput = document.getElementById('youtubeLink');
+
+        if (instagramInput) instagramInput.value = socialLinks.instagram || '';
+        if (facebookInput) facebookInput.value = socialLinks.facebook || '';
+        if (googleMapsInput) googleMapsInput.value = socialLinks.googleMaps || '';
+        if (youtubeInput) youtubeInput.value = socialLinks.youtube || '';
+      } catch (error) {
+        console.error('Error updating social links display:', error);
+        updateStatus('Error updating social links display');
+      }
+    }
+
+    // Register Form Functions
+    function handleRegister() {
+      try {
+        const registerModal = document.getElementById('registerModal');
+        registerModal.classList.add('active');
+        updateStatus('Registration form opened');
+      } catch (error) {
+        console.error('Error opening register form:', error);
+        updateStatus('Error opening registration form');
+      }
+    }
+
+    function closeRegisterModal() {
+      try {
+        const registerModal = document.getElementById('registerModal');
+        registerModal.classList.remove('active');
+        
+        // Clear form
+        document.getElementById('registerForm').reset();
+        updateStatus('Registration form closed');
+      } catch (error) {
+        console.error('Error closing register modal:', error);
+        updateStatus('Error closing registration form');
+      }
+    }
+
+    function loadRegisteredUsers() {
+      if (useFallbackStorage) {
+        registeredUsers = fallbackStorage.registeredUsers;
+        updateRegisteredUsersDisplay();
+        return;
+      }
+
+      if (!db) {
+        console.warn('Database not initialized. Using fallback storage.');
+        useFallbackStorage = true;
+        loadFallbackData();
+        return;
+      }
+      
+      const transaction = db.transaction([usersStoreName], 'readonly');
+      const objectStore = transaction.objectStore(usersStoreName);
+      const request = objectStore.getAll();
+
+      request.onsuccess = function(event) {
+        registeredUsers = event.target.result || [];
+        updateRegisteredUsersDisplay();
+      };
+
+      request.onerror = function(event) {
+        console.error('Error loading registered users:', event.target.error);
+        useFallbackStorage = true;
+        loadFallbackData();
+      };
+    }
+
+    function saveRegisteredUser(userData) {
+      if (useFallbackStorage) {
+        userData.id = fallbackStorage.registeredUsers.length + 1;
+        userData.registeredAt = new Date().toISOString();
+        fallbackStorage.registeredUsers.push(userData);
+        loadRegisteredUsers();
+        return;
+      }
+
+      if (!db) {
+        console.warn('Database not initialized. Using fallback storage.');
+        useFallbackStorage = true;
+        userData.id = fallbackStorage.registeredUsers.length + 1;
+        userData.registeredAt = new Date().toISOString();
+        fallbackStorage.registeredUsers.push(userData);
+        loadRegisteredUsers();
+        return;
+      }
+      
+      userData.registeredAt = new Date().toISOString();
+      const transaction = db.transaction([usersStoreName], 'readwrite');
+      const objectStore = transaction.objectStore(usersStoreName);
+      const request = objectStore.add(userData);
+
+      request.onsuccess = function() {
+        loadRegisteredUsers();
+      };
+
+      request.onerror = function(event) {
+        console.error('Error saving registered user:', event.target.error);
+        useFallbackStorage = true;
+        userData.id = fallbackStorage.registeredUsers.length + 1;
+        fallbackStorage.registeredUsers.push(userData);
+        loadRegisteredUsers();
+      };
+    }
+
+    function deleteRegisteredUser(id) {
+      if (useFallbackStorage) {
+        fallbackStorage.registeredUsers = fallbackStorage.registeredUsers.filter(user => user.id !== id);
+        loadRegisteredUsers();
+        return;
+      }
+
+      if (!db) {
+        console.warn('Database not initialized. Using fallback storage.');
+        useFallbackStorage = true;
+        loadRegisteredUsers();
+        return;
+      }
+      
+      const transaction = db.transaction([usersStoreName], 'readwrite');
+      const objectStore = transaction.objectStore(usersStoreName);
+      const request = objectStore.delete(id);
+
+      request.onsuccess = function() {
+        loadRegisteredUsers();
+      };
+
+      request.onerror = function(event) {
+        console.error('Error deleting registered user:', event.target.error);
+        useFallbackStorage = true;
+        loadRegisteredUsers();
+      };
+    }
+
+    function updateRegisteredUsersDisplay() {
+      try {
+        const usersListElement = document.getElementById('registeredUsersList');
+        if (!usersListElement) return;
+        
+        usersListElement.innerHTML = '';
+        
+        if (registeredUsers.length === 0) {
+          usersListElement.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 1rem;">No registered users yet.</p>';
+          return;
+        }
+        
+        registeredUsers.forEach(user => {
+          const userItem = document.createElement('div');
+          userItem.className = 'file-item';
+          userItem.innerHTML = `
+            <div style="flex: 1;">
+              <strong>${user.name}</strong><br>
+              <small>Phone: ${user.phone}</small><br>
+              <small>Description: ${user.description}</small><br>
+              <small style="color: var(--text-muted);">Registered: ${new Date(user.registeredAt).toLocaleDateString()}</small>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+              <button class="download-btn" onclick="downloadUserData(${user.id})">Download</button>
+              <button class="delete-btn" onclick="deleteRegisteredUser(${user.id})">Delete</button>
+            </div>
+          `;
+          usersListElement.appendChild(userItem);
+        });
+      } catch (error) {
+        console.error('Error updating registered users display:', error);
+        updateStatus('Error updating users display');
+      }
+    }
+
+    function showSuccessMessage(message) {
+      try {
+        const successDiv = document.createElement('div');
+        successDiv.className = 'success-message';
+        successDiv.textContent = message;
+        document.body.appendChild(successDiv);
+        
+        setTimeout(() => {
+          successDiv.classList.add('show');
+        }, 100);
+        
+        setTimeout(() => {
+          successDiv.classList.remove('show');
+          setTimeout(() => {
+            document.body.removeChild(successDiv);
+          }, 300);
+        }, 3000);
+      } catch (error) {
+        console.error('Error showing success message:', error);
+      }
+    }
+
+    // Register form submission and voice input setup
+    document.addEventListener('DOMContentLoaded', function() {
+      try {
+        initDB();
+        
+        const silentUtterance = new SpeechSynthesisUtterance('');
+        silentUtterance.volume = 0;
+        window.speechSynthesis.speak(silentUtterance);
+
+        // Initialize voice recognition for registration
+        initVoiceRecognition();
+
+        // Add click handlers for voice inputs
+        const voiceInputs = document.querySelectorAll('.voice-input');
+        voiceInputs.forEach(input => {
+          input.addEventListener('click', function() {
+            handleVoiceInput(this);
+          });
+        });
+
+        // Register form submission handler
+        const registerForm = document.getElementById('registerForm');
+        registerForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          const name = document.getElementById('userName').value.trim();
+          const phone = document.getElementById('userPhone').value.trim();
+          const description = document.getElementById('userDescription').value.trim();
+          
+          if (!name || !phone || !description) {
+            alert('Please fill in all fields');
+            return;
+          }
+          
+          const userData = {
+            name: name,
+            phone: phone,
+            description: description
+          };
+          
+          saveRegisteredUser(userData);
+          closeRegisterModal();
+          showSuccessMessage('Registration successful! Thank you for registering.');
+          updateStatus('User registered successfully');
+        });
+
+        // Close modal when clicking outside
+        const registerModal = document.getElementById('registerModal');
+        registerModal.addEventListener('click', function(e) {
+          if (e.target === registerModal) {
+            closeRegisterModal();
+          }
+        });
+      } catch (error) {
+        console.error('Error during page load:', error);
+        updateStatus('Error initializing page');
+      }
+    });
+
+    function toggleSettings() {
+      const slider = document.getElementById('settingsSlider');
+      const overlay = document.getElementById('settingsOverlay');
+      
+      if (currentInterface === 'first') {
+        slider.classList.add('first-interface');
+        slider.classList.remove('fullscreen');
+        showFirstInterfaceSettings();
+      } else {
+        slider.classList.remove('first-interface');
+        slider.classList.add('fullscreen');
+        showSecondInterfaceMenu();
+      }
+      
+      slider.classList.toggle('open');
+      overlay.classList.toggle('active');
+    }
+
+    function closeSettings() {
+      const slider = document.getElementById('settingsSlider');
+      const overlay = document.getElementById('settingsOverlay');
+      
+      slider.classList.remove('open');
+      overlay.classList.remove('active');
+      stopRecognition();
+      voiceInputField = null;
+    }
+
+    function handleFileUpload(event) {
+      try {
+        const files = Array.from(event.target.files);
+        
+        files.forEach(file => {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const fileData = {
+              name: file.name,
+              type: file.type,
+              data: e.target.result
+            };
+            saveFile(fileData);
+          };
+          reader.onerror = function(e) {
+            console.error('Error reading file:', e.target.error);
+            updateStatus('Error uploading file');
+          };
+          reader.readAsDataURL(file);
+        });
+        
+        event.target.value = '';
+      } catch (error) {
+        console.error('Unexpected error during file upload:', error);
+        updateStatus('Error uploading file');
+      }
+    }
+
+    function updateFileList() {
+      try {
+        const fileList = document.getElementById('fileList');
+        const fileListGroup = document.getElementById('fileListGroup');
+        
+        if (adFiles.length === 0) {
+          fileListGroup.style.display = 'none';
+          return;
+        }
+        
+        fileListGroup.style.display = 'block';
+        fileList.innerHTML = '';
+        
+        adFiles.forEach(file => {
+          const fileItem = document.createElement('div');
+          fileItem.className = 'file-item';
+          fileItem.innerHTML = `
+            <span class="file-name">${file.name}</span>
+            <button class="delete-btn" onclick="deleteFile(${file.id})">Delete</button>
+          `;
+          fileList.appendChild(fileItem);
+        });
+      } catch (error) {
+        console.error('Error updating file list:', error);
+        updateStatus('Error updating file list');
+      }
+    }
+
+    function updateTimer(value) {
+      try {
+        slideshowTimer = parseInt(value);
+        document.getElementById('timerValue').textContent = value;
+        
+        if (slideshowInterval) {
+          clearInterval(slideshowInterval);
+          startSlideshow();
+        }
+      } catch (error) {
+        console.error('Error updating timer:', error);
+        updateStatus('Error updating timer');
+      }
+    }
+
+    function displayCurrentAd() {
+      try {
+        const adContainer = document.getElementById('adContainer');
+        
+        if (adFiles.length === 0) {
+          adContainer.innerHTML = '<div class="ad-placeholder"><p>Upload ad files to display slideshow</p></div>';
+          return;
+        }
+        
+        const currentFile = adFiles[currentAdIndex];
+        
+        if (currentFile.type.startsWith('image/')) {
+          adContainer.innerHTML = `<img src="${currentFile.data}" alt="${currentFile.name}" />`;
+        } else if (currentFile.type.startsWith('video/')) {
+          adContainer.innerHTML = `<video src="${currentFile.data}" autoplay loop muted></video>`;
+        }
+      } catch (error) {
+        console.error('Error displaying ad:', error);
+        updateStatus('Error displaying ad');
+      }
+    }
+
+    function startSlideshow() {
+      try {
+        clearInterval(slideshowInterval);
+        
+        if (adFiles.length > 1) {
+          slideshowInterval = setInterval(() => {
+            currentAdIndex = (currentAdIndex + 1) % adFiles.length;
+            displayCurrentAd();
+          }, slideshowTimer * 1000);
+        }
+      } catch (error) {
+        console.error('Error starting slideshow:', error);
+        updateStatus('Error starting slideshow');
+      }
+    }
+
+    function switchToVoice() {
+      try {
+        const firstInterface = document.getElementById('firstInterface');
+        const secondInterface = document.getElementById('secondInterface');
+        const socialInterface = document.getElementById('socialInterface');
+        
+        firstInterface.classList.remove('active');
+        firstInterface.classList.add('hidden');
+        secondInterface.classList.remove('hidden');
+        secondInterface.classList.add('active');
+        socialInterface.classList.remove('active');
+        socialInterface.classList.add('hidden');
+        
+        currentInterface = 'second';
+        clearInterval(slideshowInterval);
+        
+        initSpeechRecognition();
+        
+        navigator.mediaDevices.getUserMedia({ audio: true })
+          .then(stream => {
+            stream.getTracks().forEach(track => track.stop());
+            updateStatus('Click assistant to start');
+          })
+          .catch(err => {
+            console.error('Microphone access denied:', err);
+            updateStatus('Microphone access denied');
+          });
+      } catch (error) {
+        console.error('Error switching to voice interface:', error);
+        updateStatus('Error switching to voice interface');
+      }
+    }
+
+    function switchToAds() {
+      try {
+        const firstInterface = document.getElementById('firstInterface');
+        const secondInterface = document.getElementById('secondInterface');
+        const socialInterface = document.getElementById('socialInterface');
+        
+        secondInterface.classList.remove('active');
+        secondInterface.classList.add('hidden');
+        socialInterface.classList.remove('active');
+        socialInterface.classList.add('hidden');
+        firstInterface.classList.remove('hidden');
+        firstInterface.classList.add('active');
+        
+        currentInterface = 'first';
+        stopRecognition();
+        startSlideshow();
+        updateStatus('Ready to assist');
+      } catch (error) {
+        console.error('Error switching to ads interface:', error);
+        updateStatus('Error switching to ads interface');
+      }
+    }
+
+    function switchToSocial() {
+      try {
+        const firstInterface = document.getElementById('firstInterface');
+        const secondInterface = document.getElementById('secondInterface');
+        const socialInterface = document.getElementById('socialInterface');
+        const qrContainer = document.getElementById('qrContainer');
+        
+        secondInterface.classList.remove('active');
+        secondInterface.classList.add('hidden');
+        firstInterface.classList.remove('active');
+        firstInterface.classList.add('hidden');
+        socialInterface.classList.remove('hidden');
+        socialInterface.classList.add('active');
+        qrContainer.style.display = 'none';
+        
+        currentInterface = 'social';
+        stopRecognition();
+        updateStatus('Select a social platform');
+      } catch (error) {
+        console.error('Error switching to social interface:', error);
+        updateStatus('Error switching to social interface');
+      }
+    }
+
+    function backToSocial() {
+      try {
+        const qrContainer = document.getElementById('qrContainer');
+        const qrCode = document.getElementById('qrCode');
+        qrContainer.style.display = 'none';
+        qrCode.innerHTML = '';
+        updateStatus('Select a social platform');
+      } catch (error) {
+        console.error('Error returning to social interface:', error);
+        updateStatus('Error returning to social interface');
+      }
+    }
+
+    function initSpeechRecognition() {
+      try {
+        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+          updateStatus('Speech recognition not supported');
+          return;
+        }
+        
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
+        
+        recognition.onstart = function() {
+          isListening = true;
+          updateStatus('Listening...');
+          document.getElementById('assistantAvatar').classList.add('listening');
+        };
+        
+        recognition.onend = function() {
+          isListening = false;
+          updateStatus('Ready to assist');
+          document.getElementById('assistantAvatar').classList.remove('listening');
+          clearTimeout(recognitionTimeout);
+          voiceInputField = null;
+        };
+        
+        recognition.onresult = async function(event) {
+          try {
+            const transcript = event.results[0][0].transcript.trim();
+            console.log('Detected:', transcript);
+            
+            if (transcript.toLowerCase() === 'goodbye') {
+              switchToAds();
+              return;
+            }
+            
+            const response = await queryGeminiAPI(transcript);
+            await speakResponse(response);
+          } catch (error) {
+            console.error('Processing speech result error:', error);
+            updateStatus('Processing error');
+          }
+        };
+        
+        recognition.onerror = function(event) {
+          console.error('Speech recognition error:', event.error);
+          isListening = false;
+          updateStatus(`Error: ${event.error}`);
+          document.getElementById('assistantAvatar').classList.remove('listening');
+          voiceInputField = null;
+        };
+      } catch (error) {
+        console.error('Error initializing speech recognition:', error);
+        updateStatus('Speech recognition initialization error');
+      }
+    }
+
+    function toggleVoiceRecognition() {
+      try {
+        if (currentInterface !== 'second') return;
+        
+        if (isListening) {
+          stopRecognition();
+        } else if (!isSpeaking) {
+          startRecognition();
+        }
+      } catch (error) {
+        console.error('Error toggling voice recognition:', error);
+        updateStatus('Error toggling voice recognition');
+      }
+    }
+
+    function startRecognition() {
+      try {
+        if (!recognition || isListening || isSpeaking) return;
+        
+        recognition.start();
+        
+        recognitionTimeout = setTimeout(() => {
+          if (isListening) {
+            recognition.stop();
+          }
+        }, 10000);
+      } catch (error) {
+        console.error('Failed to start recognition:', error);
+        updateStatus('Recognition error');
+      }
+    }
+
+    function stopRecognition() {
+      try {
+        if (recognition && isListening) {
+          recognition.stop();
+        }
+        clearTimeout(recognitionTimeout);
+      } catch (error) {
+        console.error('Error stopping recognition:', error);
+        updateStatus('Error stopping recognition');
+      }
+    }
+
+    async function queryGeminiAPI(transcript) {
+      try {
+        const customAnswer = findCustomAnswer(transcript);
+        if (customAnswer) {
+          return customAnswer;
+        }
+        
+        updateStatus('Thinking');
+        
+        let systemPrompt = `You need to act as our robot named "${robotData.name}", created by RoboMiracle, a Coimbatore based company. The creator and company details should not be changed. You need to respond only for 10 tokens and it should be better meaningful sentence that should better response for question. Your purpose of creation is "${robotData.purpose}".`;
+        
+        if (robotData.chatHistory && robotData.chatHistory.trim()) {
+          systemPrompt += ` This is the history as I mention in double quotes: "${robotData.chatHistory}"`;
+        }
+        
+        const fullPrompt = `${systemPrompt}\n\nUser: ${transcript}\n\nRobot Response:`;
+        
+        const response = await fetch(`${GEMINI_API_ENDPOINT}?key=${GEMINI_API_KEY}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{
+                text: fullPrompt
+              }]
+            }],
+            generationConfig: {
+              temperature: 0.7,
+              maxOutputTokens: 10
+            }
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        
+        if (!data.candidates || !data.candidates[0]?.content?.parts?.[0]?.text) {
+          throw new Error('Invalid response format');
+        }
+
+        return data.candidates[0].content.parts[0].text;
+      } catch (error) {
+        console.error('Gemini API error:', error);
+        return 'Sorry, I encountered an error while processing your request.';
+      }
+    }
+
+    async function speakResponse(text) {
+      return new Promise((resolve, reject) => {
+        try {
+          if (isSpeaking) {
+            resolve();
+            return;
+          }
+
+          window.speechSynthesis.cancel();
+          
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = 'en-US';
+          
+          utterance.onstart = function() {
+            isSpeaking = true;
+            document.getElementById('assistantAvatar').classList.add('speaking');
+            typeText(text);
+          };
+          
+          utterance.onend = function() {
+            isSpeaking = false;
+            document.getElementById('assistantAvatar').classList.remove('speaking');
+            clearGreetingText();
+            resolve();
+          };
+          
+          utterance.onerror = function(event) {
+            isSpeaking = false;
+            document.getElementById('assistantAvatar').classList.remove('speaking');
+            clearGreetingText();
+            console.error('Speech error:', event.error);
+            reject(event.error);
+          };
+
+          window.speechSynthesis.speak(utterance);
+        } catch (error) {
+          isSpeaking = false;
+          console.error('Error speaking response:', error);
+          reject(error);
+        }
+      });
+    }
+
+    function typeText(text) {
+      try {
+        const greetingElement = document.getElementById('greetingText');
+        greetingElement.style.display = 'flex';
+        greetingElement.textContent = '';
+        greetingElement.classList.add('typing');
+        
+        let index = 0;
+        const typingSpeed = 100;
+        
+        function type() {
+          if (index < text.length) {
+            greetingElement.textContent += text.charAt(index);
+            index++;
+            setTimeout(type, typingSpeed);
+          } else {
+            greetingElement.classList.remove('typing');
+          }
+        }
+        
+        type();
+      } catch (error) {
+        console.error('Error typing text:', error);
+        updateStatus('Error displaying response');
+      }
+    }
+
+    function clearGreetingText() {
+      try {
+        const greetingElement = document.getElementById('greetingText');
+        greetingElement.style.display = 'none';
+        greetingElement.textContent = '';
+        greetingElement.classList.remove('typing');
+      } catch (error) {
+        console.error('Error clearing greeting text:', error);
+        updateStatus('Error clearing response');
+      }
+    }
+
+    function updateStatus(status) {
+      try {
+        const statusElement = document.getElementById('statusIndicator');
+        statusElement.textContent = status;
+        
+        if (status === 'Thinking') {
+          statusElement.classList.add('processing');
+        } else {
+          statusElement.classList.remove('processing');
+        }
+      } catch (error) {
+        console.error('Error updating status:', error);
+      }
+    }
+
+    function handleSocialMedia() {
+      try {
+        switchToSocial();
+      } catch (error) {
+        console.error('Error handling social media:', error);
+        updateStatus('Error accessing social media');
+      }
+    }
+
+    function generateQRCode(platform) {
+      try {
+        const qrContainer = document.getElementById('qrContainer');
+        const qrCode = document.getElementById('qrCode');
+        const qrTitle = document.getElementById('qrTitle');
+        let url = socialLinks[platform];
+        
+        if (!url) {
+          alert(`No ${platform} URL set. Please configure it in the admin panel.`);
+          return;
+        }
+
+        qrContainer.style.display = 'flex';
+        qrCode.innerHTML = '';
+        qrTitle.textContent = `${platform.charAt(0).toUpperCase() + platform.slice(1)} QR Code`;
+        
+        new QRCode(qrCode, {
+          text: url,
+          width: 200,
+          height: 200,
+          colorDark: '#000000',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.H
+        });
+
+        updateStatus(`Showing ${platform} QR code`);
+      } catch (error) {
+        console.error('Error generating QR code:', error);
+        updateStatus('Error generating QR code');
+      }
+    }
+
+    function handleTextInput() {
+      try {
+        const textInput = document.getElementById('textInput');
+        const inputText = textInput.value.trim();
+        
+        if (!inputText) return;
+        
+        textInput.value = '';
+        
+        processUserInput(inputText);
+      } catch (error) {
+        console.error('Error handling text input:', error);
+        updateStatus('Error processing text input');
+      }
+    }
+
+    function handleTextInputKeyPress(event) {
+      try {
+        if (event.key === 'Enter') {
+          handleTextInput();
+        }
+      } catch (error) {
+        console.error('Error handling text input key press:', error);
+        updateStatus('Error processing text input');
+      }
+    }
+
+    async function processUserInput(inputText) {
+      try {
+        if (inputText.toLowerCase() === 'goodbye') {
+          switchToAds();
+          return;
+        }
+        
+        const response = await queryGeminiAPI(inputText);
+        await speakResponse(response);
+      } catch (error) {
+        console.error('Processing error:', error);
+        updateStatus('Processing error');
+      }
+    }
+
+    function showFirstInterfaceSettings() {
+      try {
+        hideAllPanels();
+        document.getElementById('firstInterfaceSettings').style.display = 'block';
+      } catch (error) {
+        console.error('Error showing first interface settings:', error);
+        updateStatus('Error showing settings');
+      }
+    }
+
+    function showSecondInterfaceMenu() {
+      try {
+        hideAllPanels();
+        document.getElementById('secondInterfaceMenu').style.display = 'block';
+      } catch (error) {
+        console.error('Error showing second interface menu:', error);
+        updateStatus('Error showing menu');
+      }
+    }
+
+    function showAdminLogin() {
+      try {
+        hideAllPanels();
+        document.getElementById('adminLogin').style.display = 'block';
+        document.getElementById('adminUsername').value = '';
+        document.getElementById('adminPassword').value = '';
+      } catch (error) {
+        console.error('Error showing admin login:', error);
+        updateStatus('Error showing admin login');
+      }
+    }
+
+    function showAdminPanel() {
+      try {
+        hideAllPanels();
+        document.getElementById('adminPanel').style.display = 'block';
+        updateAdminPanelData();
+        // Show robot settings by default
+        showAdminFeature('robot');
+      } catch (error) {
+        console.error('Error showing admin panel:', error);
+        updateStatus('Error showing admin panel');
+      }
+    }
+
+    function showAboutRobot() {
+      try {
+        hideAllPanels();
+        document.getElementById('aboutRobotPanel').style.display = 'block';
+        updateAboutRobotDisplay();
+      } catch (error) {
+        console.error('Error showing about robot:', error);
+        updateStatus('Error showing about robot');
+      }
+    }
+
+    function hideAllPanels() {
+      try {
+        const panels = [
+          'firstInterfaceSettings',
+          'secondInterfaceMenu', 
+          'adminLogin',
+          'adminPanel',
+          'aboutRobotPanel'
+        ];
+        panels.forEach(panelId => {
+          document.getElementById(panelId).style.display = 'none';
+        });
+      } catch (error) {
+        console.error('Error hiding panels:', error);
+        updateStatus('Error hiding panels');
+      }
+    }
+
+    function handleAdminLogin() {
+      try {
+        const username = document.getElementById('adminUsername').value;
+        const password = document.getElementById('adminPassword').value;
+        
+        if (username === 'RBM' && password === 'RBM@2025') {
+          showAdminPanel();
+        } else {
+          alert('Invalid credentials!');
+        }
+      } catch (error) {
+        console.error('Error handling admin login:', error);
+        updateStatus('Error during admin login');
+      }
+    }
+
+    function loadRobotData() {
+      if (useFallbackStorage) {
+        robotData = fallbackStorage.robotData || robotData;
+        updateAdminPanelData();
+        updateAboutRobotDisplay();
+        return;
+      }
+
+      if (!db) {
+        console.warn('Database not initialized. Using fallback storage.');
+        useFallbackStorage = true;
+        loadFallbackData();
+        return;
+      }
+      
+      const transaction = db.transaction([robotStoreName], 'readonly');
+      const objectStore = transaction.objectStore(robotStoreName);
+      const request = objectStore.get('robotData');
+
+      request.onsuccess = function(event) {
+        if (event.target.result) {
+          robotData = event.target.result.value;
+          updateAdminPanelData();
+          updateAboutRobotDisplay();
+        }
+      };
+
+      request.onerror = function(event) {
+        console.error('Error loading robot data:', event.target.error);
+        useFallbackStorage = true;
+        loadFallbackData();
+      };
+    }
+
+    function saveRobotData() {
+      try {
+        robotData.name = document.getElementById('robotName').value;
+        robotData.purpose = document.getElementById('robotPurpose').value;
+        
+        if (useFallbackStorage) {
+          fallbackStorage.robotData = robotData;
+          updateAboutRobotDisplay();
+          return;
+        }
+
+        if (!db) {
+          console.warn('Database not initialized. Using fallback storage.');
+          useFallbackStorage = true;
+          fallbackStorage.robotData = robotData;
+          updateAboutRobotDisplay();
+          return;
+        }
+        
+        const transaction = db.transaction([robotStoreName], 'readwrite');
+        const objectStore = transaction.objectStore(robotStoreName);
+        const request = objectStore.put({ key: 'robotData', value: robotData });
+
+        request.onerror = function(event) {
+          console.error('Error saving robot data:', event.target.error);
+          useFallbackStorage = true;
+          fallbackStorage.robotData = robotData;
+          updateAboutRobotDisplay();
+        };
+        
+        updateAboutRobotDisplay();
+      } catch (error) {
+        console.error('Error saving robot data:', error);
+        updateStatus('Error saving robot data');
+      }
+    }
+
+    function saveChatHistory() {
+      try {
+        robotData.chatHistory = document.getElementById('chatHistory').value;
+        
+        if (useFallbackStorage) {
+          fallbackStorage.robotData = robotData;
+          return;
+        }
+
+        if (!db) {
+          console.warn('Database not initialized. Using fallback storage.');
+          useFallbackStorage = true;
+          fallbackStorage.robotData = robotData;
+          return;
+        }
+        
+        const transaction = db.transaction([robotStoreName], 'readwrite');
+        const objectStore = transaction.objectStore(robotStoreName);
+        const request = objectStore.put({ key: 'robotData', value: robotData });
+
+        request.onerror = function(event) {
+          console.error('Error saving chat history:', event.target.error);
+          useFallbackStorage = true;
+          fallbackStorage.robotData = robotData;
+        };
+      } catch (error) {
+        console.error('Error saving chat history:', error);
+        updateStatus('Error saving chat history');
+      }
+    }
+
+    function updateAdminPanelData() {
+      try {
+        document.getElementById('robotName').value = robotData.name;
+        document.getElementById('robotPurpose').value = robotData.purpose;
+        document.getElementById('chatHistory').value = robotData.chatHistory;
+        updateSocialLinksDisplay();
+      } catch (error) {
+        console.error('Error updating admin panel data:', error);
+        updateStatus('Error updating admin panel');
+      }
+    }
+
+    function updateAboutRobotDisplay() {
+      try {
+        document.getElementById('displayRobotName').textContent = robotData.name;
+        document.getElementById('displayRobotPurpose').textContent = robotData.purpose;
+      } catch (error) {
+        console.error('Error updating about robot display:', error);
+        updateStatus('Error updating robot info');
+      }
+    }
+
+    function loadCustomQA() {
+      if (useFallbackStorage) {
+        customQAList = fallbackStorage.customQA;
+        updateCustomQADisplay();
+        return;
+      }
+
+      if (!db) {
+        console.warn('Database not initialized. Using fallback storage.');
+        useFallbackStorage = true;
+        loadFallbackData();
+        return;
+      }
+      
+      const transaction = db.transaction([qaStoreName], 'readonly');
+      const objectStore = transaction.objectStore(qaStoreName);
+      const request = objectStore.getAll();
+
+      request.onsuccess = function(event) {
+        customQAList = event.target.result || [];
+        updateCustomQADisplay();
+      };
+
+      request.onerror = function(event) {
+        console.error('Error loading custom QA:', event.target.error);
+        useFallbackStorage = true;
+        loadFallbackData();
+      };
+    }
+
+    function addCustomQA() {
+      try {
+        const question = document.getElementById('newQuestion').value.trim();
+        const answer = document.getElementById('newAnswer').value.trim();
+        
+        if (!question || !answer) {
+          alert('Please enter both question and answer');
+          return;
+        }
+        
+        const qaData = { question, answer };
+        
+        if (useFallbackStorage) {
+          qaData.id = fallbackStorage.customQA.length + 1;
+          fallbackStorage.customQA.push(qaData);
+          loadCustomQA();
+          document.getElementById('newQuestion').value = '';
+          document.getElementById('newAnswer').value = '';
+          return;
+        }
+
+        if (!db) {
+          console.warn('Database not initialized. Using fallback storage.');
+          useFallbackStorage = true;
+          fallbackStorage.customQA.push(qaData);
+          loadCustomQA();
+          return;
+        }
+        
+        const transaction = db.transaction([qaStoreName], 'readwrite');
+        const objectStore = transaction.objectStore(qaStoreName);
+        const request = objectStore.add(qaData);
+
+        request.onsuccess = function() {
+          loadCustomQA();
+          document.getElementById('newQuestion').value = '';
+          document.getElementById('newAnswer').value = '';
+        };
+
+        request.onerror = function(event) {
+          console.error('Error adding custom QA:', event.target.error);
+          useFallbackStorage = true;
+          fallbackStorage.customQA.push(qaData);
+          loadCustomQA();
+        };
+      } catch (error) {
+        console.error('Error adding custom QA:', error);
+        updateStatus('Error adding custom QA');
+      }
+    }
+
+    function deleteCustomQA(id) {
+      try {
+        if (useFallbackStorage) {
+          fallbackStorage.customQA = fallbackStorage.customQA.filter(qa => qa.id !== id);
+          loadCustomQA();
+          return;
+        }
+
+        if (!db) {
+          console.warn('Database not initialized. Using fallback storage.');
+          useFallbackStorage = true;
+          loadCustomQA();
+          return;
+        }
+        
+        const transaction = db.transaction([qaStoreName], 'readwrite');
+        const objectStore = transaction.objectStore(qaStoreName);
+        const request = objectStore.delete(id);
+
+        request.onsuccess = function() {
+          loadCustomQA();
+        };
+
+        request.onerror = function(event) {
+          console.error('Error deleting custom QA:', event.target.error);
+          useFallbackStorage = true;
+          loadCustomQA();
+        };
+      } catch (error) {
+        console.error('Error deleting custom QA:', error);
+        updateStatus('Error deleting custom QA');
+      }
+    }
+
+    function updateCustomQADisplay() {
+      try {
+        const qaListElement = document.getElementById('customQAList');
+        qaListElement.innerHTML = '';
+        
+        customQAList.forEach(qa => {
+          const qaItem = document.createElement('div');
+          qaItem.className = 'file-item';
+          qaItem.innerHTML = `
+            <div style="flex: 1;">
+              <strong>Q:</strong> ${qa.question}<br>
+              <small><strong>A:</strong> ${qa.answer}</small>
+            </div>
+            <button class="delete-btn" onclick="deleteCustomQA(${qa.id})">Delete</button>
+          `;
+          qaListElement.appendChild(qaItem);
+        });
+      } catch (error) {
+        console.error('Error updating custom QA display:', error);
+        updateStatus('Error updating custom QA');
+      }
+    }
+
+    function findCustomAnswer(question) {
+      try {
+        const normalizedQuestion = question.toLowerCase().trim();
+        
+        for (let qa of customQAList) {
+          if (normalizedQuestion.includes(qa.question.toLowerCase()) || 
+              qa.question.toLowerCase().includes(normalizedQuestion)) {
+            return qa.answer;
+          }
+        }
+        
+        return null;
+      } catch (error) {
+        console.error('Error finding custom answer:', error);
+        return null;
+      }
+    }
+
+    document.addEventListener('visibilitychange', function() {
+      try {
+        if (document.hidden) {
+          stopRecognition();
+          window.speechSynthesis.cancel();
+          voiceInputField = null;
+        }
+      } catch (error) {
+        console.error('Error handling visibility change:', error);
+        updateStatus('Error handling visibility change');
+      }
+    });
+  </script>
+</body>
+</html>
