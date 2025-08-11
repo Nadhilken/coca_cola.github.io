@@ -11,6 +11,7 @@
   <meta name="theme-color" content="#b30000">
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   
   <style>
     * {
@@ -37,6 +38,7 @@
       --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
       --radius: 12px;
       --radius-lg: 16px;
+      --watermark-image: url('https://raw.githubusercontent.com/Nadhilken/mallar/refs/heads/main/1630669980286-removebg-preview.png?token=GHSAT0AAAAAADHLCICDDALXADD3BLEPQCCE2EXRUZQ');
     }
 
     body {
@@ -51,21 +53,26 @@
       position: relative;
     }
 
-    /* Background Image Overlay */
-    body::before {
+    /* Watermark for all interfaces */
+    .interface::before {
       content: '';
-      position: fixed;
+      position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background-image: url('https://raw.githubusercontent.com/Nadhilken/mallar/refs/heads/main/1630669980286-removebg-preview.png?token=GHSAT0AAAAAADHLCICDDALXADD3BLEPQCCE2EXRUZQ');
-      background-size: cover;
+      background-image: var(--watermark-image);
+      background-size: contain;
       background-position: center;
       background-repeat: no-repeat;
-      opacity: 0.1;
-      z-index: -1;
+      opacity: 0.08;
+      z-index: 0;
       pointer-events: none;
+    }
+
+    .interface > * {
+      position: relative;
+      z-index: 1;
     }
 
     .glass {
@@ -312,6 +319,157 @@
       font-weight: 600;
       color: var(--text-primary);
       text-transform: uppercase;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    /* Features Interface Styles */
+    .features-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 90vw;
+      max-height: 70vh;
+      overflow-y: auto;
+      padding: 1rem;
+    }
+
+    .feature-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--backdrop-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: var(--shadow-glass);
+      transition: var(--transition-smooth);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .feature-card h3 {
+      color: var(--brand-glow);
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .feature-card ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .feature-card li {
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 0.8rem;
+      padding-left: 1.5rem;
+      position: relative;
+    }
+
+    .feature-card li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--brand-glow);
+      font-weight: bold;
+    }
+
+    /* About Creator Interface Styles */
+    .creator-container {
+      max-width: 800px;
+      width: 90%;
+      background: var(--glass-bg);
+      backdrop-filter: var(--backdrop-blur);
+      border: 2px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 3rem;
+      box-shadow: var(--shadow-glass);
+      text-align: center;
+    }
+
+    .creator-title {
+      color: var(--brand-glow);
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+    }
+
+    .creator-subtitle {
+      color: var(--text-accent);
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      font-weight: 300;
+    }
+
+    .creator-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .creator-info {
+      text-align: left;
+    }
+
+    .creator-info h4 {
+      color: var(--brand-glow);
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+    }
+
+    .creator-info p {
+      color: var(--text-primary);
+      line-height: 1.8;
+      margin-bottom: 1rem;
+    }
+
+    .creator-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .stat-item {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1rem;
+      border-radius: var(--radius);
+      text-align: center;
+    }
+
+    .stat-number {
+      color: var(--brand-glow);
+      font-size: 2rem;
+      font-weight: bold;
+      display: block;
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .creator-image {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .creator-avatar {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      border: 4px solid var(--brand-glow);
+      box-shadow: 0 0 30px rgba(239, 68, 68, 0.4);
+      margin-bottom: 1rem;
     }
 
     .settings-slider {
@@ -618,6 +776,19 @@
       transform: translateY(-2px);
     }
 
+    /* Feature Management in Admin */
+    .feature-form {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1rem;
+      border-radius: var(--radius);
+      margin-bottom: 1rem;
+    }
+
+    .feature-points {
+      min-height: 100px;
+      resize: vertical;
+    }
+
     /* Register Form Modal Styles */
     .register-modal {
       position: fixed;
@@ -823,6 +994,11 @@
       .register-form-container { padding: 1.5rem; }
       .register-title { font-size: 1.5rem; }
       .admin-features-grid { grid-template-columns: 1fr; }
+      .features-container { grid-template-columns: 1fr; }
+      .creator-content { grid-template-columns: 1fr; gap: 2rem; }
+      .creator-stats { grid-template-columns: 1fr; }
+      .creator-container { padding: 2rem; }
+      .creator-title { font-size: 2rem; }
     }
 
     @media (max-width: 480px) {
@@ -844,6 +1020,8 @@
       .register-form-container { padding: 1rem; }
       .register-title { font-size: 1.3rem; }
       .register-form-actions { flex-direction: column; }
+      .creator-container { padding: 1.5rem; }
+      .creator-title { font-size: 1.8rem; }
     }
   </style>
 </head>
@@ -965,12 +1143,15 @@
         <button class="admin-feature-btn" onclick="showAdminFeature('qa')" id="qaBtn">
           Custom Q&A
         </button>
+        <button class="admin-feature-btn" onclick="showAdminFeature('features')" id="featuresBtn">
+          Manage Features
+        </button>
         <button class="admin-feature-btn" onclick="showAdminFeature('users')" id="usersBtn">
           Registered Users
         </button>
       </div>
 
-       Robot Settings Feature 
+      
       <div id="robotFeature" class="admin-feature-content">
         <div class="form-group">
           <label class="form-label">Robot Name</label>
@@ -988,7 +1169,7 @@
         </div>
       </div>
 
-       Social Media Feature 
+      
       <div id="socialFeature" class="admin-feature-content">
         <div class="form-group">
           <label class="form-label">Social Media Links</label>
@@ -999,7 +1180,7 @@
         </div>
       </div>
 
-       Custom Q&A Feature 
+      
       <div id="qaFeature" class="admin-feature-content">
         <div class="form-group">
           <label class="form-label">Custom Q&A</label>
@@ -1012,7 +1193,20 @@
         </div>
       </div>
 
-       Registered Users Feature 
+      
+      <div id="featuresFeature" class="admin-feature-content">
+        <div class="form-group">
+          <label class="form-label">Add New Feature</label>
+          <div class="feature-form">
+            <input type="text" id="newFeatureTitle" class="form-input" placeholder="Feature Title" style="margin-bottom: 0.5rem;" />
+            <textarea id="newFeaturePoints" class="form-input feature-points" placeholder="Enter feature points (one per line)"></textarea>
+            <button class="btn glass glass-hover" onclick="addFeature()" style="width: 100%; margin-top: 0.5rem;">Add Feature</button>
+          </div>
+          <div id="featuresList" style="max-height: 300px; overflow-y: auto;"></div>
+        </div>
+      </div>
+
+      
       <div id="usersFeature" class="admin-feature-content">
         <div class="form-group">
           <label class="form-label">Registered Users</label>
@@ -1066,7 +1260,7 @@
     </div>
   </div>
 
-   Register Form Modal 
+  
   <div class="register-modal" id="registerModal">
     <div class="register-form-container">
       <h2 class="register-title">User Registration</h2>
@@ -1138,6 +1332,9 @@
 
     <div class="interface hidden" id="secondInterface">
       <div class="voice-container">
+        <div class="card glass glass-hover" onclick="handleFeatures()">
+          <span>Our Features</span>
+        </div>
         <div class="card glass glass-hover" onclick="handleSocialMedia()">
           <span>Social Media</span>
         </div>
@@ -1173,6 +1370,9 @@
         <div class="card glass glass-hover" onclick="handleRegister()">
           <span>Register</span>
         </div>
+        <div class="card glass glass-hover" onclick="handleAboutCreator()">
+          <span>About Creator</span>
+        </div>
       </div>
       <button class="btn glass glass-hover back-btn" onclick="switchToAds()">
         Back
@@ -1198,6 +1398,67 @@
         <div class="qr-title" id="qrTitle"></div>
         <div id="qrCode"></div>
         <button class="btn glass glass-hover" onclick="backToSocial()">Back</button>
+      </div>
+      <button class="btn glass glass-hover back-btn" onclick="switchToVoice()">
+        Back
+      </button>
+    </div>
+
+    
+    <div class="interface hidden" id="featuresInterface">
+      <div class="features-container" id="featuresContainer">
+         Features will be dynamically loaded here 
+      </div>
+      <button class="btn glass glass-hover back-btn" onclick="switchToVoice()">
+        Back
+      </button>
+    </div>
+
+    
+    <div class="interface hidden" id="creatorInterface">
+      <div class="creator-container">
+        <h1 class="creator-title">RoboMiracle</h1>
+        <p class="creator-subtitle">Innovating the Future of AI Technology</p>
+        
+        <div class="creator-content">
+          <div class="creator-info">
+            <h4>About Our Company</h4>
+            <p>RoboMiracle is a cutting-edge technology company based in Coimbatore, India, specializing in artificial intelligence and robotics solutions. We are dedicated to creating innovative AI-powered assistants that enhance human productivity and interaction.</p>
+            
+            <p>Our mission is to bridge the gap between advanced AI technology and everyday users, making sophisticated AI accessible and user-friendly for businesses and individuals alike.</p>
+            
+            <h4>Our Vision</h4>
+            <p>To become a global leader in AI assistant technology, empowering businesses and individuals with intelligent, responsive, and intuitive AI solutions that transform the way we interact with technology.</p>
+          </div>
+          
+          <div class="creator-image">
+            <img 
+              src="https://ik.imagekit.io/hyblsnnga/cola.gif?updatedAt=1754473024853" 
+              alt="RoboMiracle Logo" 
+              class="creator-avatar"
+            />
+            <h4 style="color: var(--brand-glow); margin-bottom: 1rem;">RoboMiracle</h4>
+          </div>
+        </div>
+        
+        <div class="creator-stats">
+          <div class="stat-item">
+            <span class="stat-number">2025</span>
+            <span class="stat-label">Founded</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">AI</span>
+            <span class="stat-label">Specialization</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">India</span>
+            <span class="stat-label">Location</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">1.0</span>
+            <span class="stat-label">Version</span>
+          </div>
+        </div>
       </div>
       <button class="btn glass glass-hover back-btn" onclick="switchToVoice()">
         Back
@@ -1235,7 +1496,8 @@
         googleMaps: '',
         youtube: ''
       },
-      registeredUsers: []
+      registeredUsers: [],
+      features: []
     };
 
     // Gemini API Configuration
@@ -1244,12 +1506,13 @@
 
     // IndexedDB setup
     const dbName = 'CocolaBotDB';
-    const dbVersion = 6;
+    const dbVersion = 7;
     const storeName = 'adFiles';
     const robotStoreName = 'robotData';
     const qaStoreName = 'customQA';
     const socialStoreName = 'socialLinks';
     const usersStoreName = 'registeredUsers';
+    const featuresStoreName = 'features';
     
     let customQAList = [];
     let robotData = {
@@ -1264,6 +1527,7 @@
       youtube: ''
     };
     let registeredUsers = [];
+    let featuresList = [];
 
     function initDB() {
       if (!window.indexedDB) {
@@ -1316,6 +1580,9 @@
           if (!db.objectStoreNames.contains(usersStoreName)) {
             db.createObjectStore(usersStoreName, { keyPath: 'id', autoIncrement: true });
           }
+          if (!db.objectStoreNames.contains(featuresStoreName)) {
+            db.createObjectStore(featuresStoreName, { keyPath: 'id', autoIncrement: true });
+          }
         } catch (error) {
           console.error('Error during database upgrade:', error);
           isDbOpening = false;
@@ -1333,6 +1600,7 @@
         loadCustomQA();
         loadSocialLinks();
         loadRegisteredUsers();
+        loadFeatures();
       };
     }
 
@@ -1374,6 +1642,7 @@
       customQAList = fallbackStorage.customQA;
       socialLinks = fallbackStorage.socialLinks;
       registeredUsers = fallbackStorage.registeredUsers;
+      featuresList = fallbackStorage.features;
       updateFileList();
       displayCurrentAd();
       startSlideshow();
@@ -1382,7 +1651,407 @@
       updateCustomQADisplay();
       updateSocialLinksDisplay();
       updateRegisteredUsersDisplay();
+      updateFeaturesDisplay();
       updateStatus('Using temporary storage');
+    }
+
+    // PDF Generation Function
+    function downloadUserDataAsPDF(userId) {
+      try {
+        const user = registeredUsers.find(u => u.id === userId);
+        if (!user) {
+          alert('User not found');
+          return;
+        }
+        
+        // Initialize jsPDF
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        // Set up colors and fonts
+        const primaryColor = [179, 0, 0]; // #b30000
+        const secondaryColor = [89, 0, 0]; // #590000
+        const textColor = [51, 51, 51]; // Dark gray
+        const lightGray = [128, 128, 128];
+        
+        // Header Section
+        doc.setFillColor(...primaryColor);
+        doc.rect(0, 0, 210, 40, 'F');
+        
+        // Company Logo/Title
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(24);
+        doc.setFont('helvetica', 'bold');
+        doc.text('RoboMiracle', 20, 25);
+        
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        doc.text('AI Voice Assistant Technology', 20, 32);
+        
+        // Document Title
+        doc.setTextColor(...textColor);
+        doc.setFontSize(20);
+        doc.setFont('helvetica', 'bold');
+        doc.text('USER REGISTRATION CERTIFICATE', 20, 60);
+        
+        // Horizontal line
+        doc.setDrawColor(...primaryColor);
+        doc.setLineWidth(2);
+        doc.line(20, 65, 190, 65);
+        
+        // Registration Details Section
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(...primaryColor);
+        doc.text('REGISTRATION DETAILS', 20, 85);
+        
+        // User Information
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(...textColor);
+        
+        let yPosition = 100;
+        const lineHeight = 15;
+        
+        // Full Name
+        doc.setFont('helvetica', 'bold');
+        doc.text('Full Name:', 20, yPosition);
+        doc.setFont('helvetica', 'normal');
+        doc.text(user.name, 60, yPosition);
+        yPosition += lineHeight;
+        
+        // Phone Number
+        doc.setFont('helvetica', 'bold');
+        doc.text('Phone Number:', 20, yPosition);
+        doc.setFont('helvetica', 'normal');
+        doc.text(user.phone, 60, yPosition);
+        yPosition += lineHeight;
+        
+        // Registration Date
+        doc.setFont('helvetica', 'bold');
+        doc.text('Registration Date:', 20, yPosition);
+        doc.setFont('helvetica', 'normal');
+        const regDate = new Date(user.registeredAt).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        doc.text(regDate, 60, yPosition);
+        yPosition += lineHeight + 10;
+        
+        // Description Section
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(...primaryColor);
+        doc.text('USER DESCRIPTION', 20, yPosition);
+        yPosition += 10;
+        
+        // Description content with text wrapping
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(...textColor);
+        const descriptionLines = doc.splitTextToSize(user.description, 170);
+        doc.text(descriptionLines, 20, yPosition);
+        yPosition += (descriptionLines.length * 6) + 20;
+        
+        // Certificate Section
+        doc.setFillColor(245, 245, 245);
+        doc.rect(15, yPosition, 180, 40, 'F');
+        
+        doc.setTextColor(...primaryColor);
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.text('CERTIFICATE OF REGISTRATION', 20, yPosition + 15);
+        
+        doc.setTextColor(...textColor);
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.text('This certificate confirms that the above-mentioned user has been successfully', 20, yPosition + 25);
+        doc.text('registered with CocolaBot AI Voice Assistant system by RoboMiracle.', 20, yPosition + 32);
+        
+        yPosition += 50;
+        
+        // Footer Section
+        doc.setFillColor(...secondaryColor);
+        doc.rect(0, 250, 210, 47, 'F');
+        
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.text('RoboMiracle Technologies Pvt. Ltd.', 20, 265);
+        doc.text('Coimbatore, Tamil Nadu, India', 20, 272);
+        doc.text('Email: info@robomiracle.com | Web: www.robomiracle.com', 20, 279);
+        
+        // Document generation timestamp
+        doc.setTextColor(...lightGray);
+        doc.setFontSize(8);
+        const timestamp = new Date().toLocaleString();
+        doc.text(`Generated on: ${timestamp}`, 20, 290);
+        
+        // Unique Document ID
+        const docId = `RBM-${user.id}-${Date.now().toString().slice(-6)}`;
+        doc.text(`Document ID: ${docId}`, 120, 290);
+        
+        // Save the PDF
+        const fileName = `Registration_${user.name.replace(/\s+/g, '_')}_${user.id}.pdf`;
+        doc.save(fileName);
+        
+        updateStatus(`PDF downloaded for ${user.name}`);
+        showSuccessMessage(`Registration certificate downloaded successfully!`);
+        
+      } catch (error) {
+        console.error('Error generating PDF:', error);
+        updateStatus('Error generating PDF');
+        alert('Error generating PDF. Please try again.');
+      }
+    }
+
+    // Features Management Functions
+    function loadFeatures() {
+      if (useFallbackStorage) {
+        featuresList = fallbackStorage.features;
+        updateFeaturesDisplay();
+        updateFeaturesAdminDisplay();
+        return;
+      }
+
+      if (!db) {
+        console.warn('Database not initialized. Using fallback storage.');
+        useFallbackStorage = true;
+        loadFallbackData();
+        return;
+      }
+      
+      const transaction = db.transaction([featuresStoreName], 'readonly');
+      const objectStore = transaction.objectStore(featuresStoreName);
+      const request = objectStore.getAll();
+
+      request.onsuccess = function(event) {
+        featuresList = event.target.result || [];
+        updateFeaturesDisplay();
+        updateFeaturesAdminDisplay();
+      };
+
+      request.onerror = function(event) {
+        console.error('Error loading features:', event.target.error);
+        useFallbackStorage = true;
+        loadFallbackData();
+      };
+    }
+
+    function addFeature() {
+      try {
+        const title = document.getElementById('newFeatureTitle').value.trim();
+        const pointsText = document.getElementById('newFeaturePoints').value.trim();
+        
+        if (!title || !pointsText) {
+          alert('Please enter both title and feature points');
+          return;
+        }
+        
+        const points = pointsText.split('\n').filter(point => point.trim()).map(point => point.trim());
+        const featureData = { title, points };
+        
+        if (useFallbackStorage) {
+          featureData.id = fallbackStorage.features.length + 1;
+          fallbackStorage.features.push(featureData);
+          loadFeatures();
+          document.getElementById('newFeatureTitle').value = '';
+          document.getElementById('newFeaturePoints').value = '';
+          return;
+        }
+
+        if (!db) {
+          console.warn('Database not initialized. Using fallback storage.');
+          useFallbackStorage = true;
+          fallbackStorage.features.push(featureData);
+          loadFeatures();
+          return;
+        }
+        
+        const transaction = db.transaction([featuresStoreName], 'readwrite');
+        const objectStore = transaction.objectStore(featuresStoreName);
+        const request = objectStore.add(featureData);
+
+        request.onsuccess = function() {
+          loadFeatures();
+          document.getElementById('newFeatureTitle').value = '';
+          document.getElementById('newFeaturePoints').value = '';
+        };
+
+        request.onerror = function(event) {
+          console.error('Error adding feature:', event.target.error);
+          useFallbackStorage = true;
+          fallbackStorage.features.push(featureData);
+          loadFeatures();
+        };
+      } catch (error) {
+        console.error('Error adding feature:', error);
+        updateStatus('Error adding feature');
+      }
+    }
+
+    function deleteFeature(id) {
+      try {
+        if (useFallbackStorage) {
+          fallbackStorage.features = fallbackStorage.features.filter(feature => feature.id !== id);
+          loadFeatures();
+          return;
+        }
+
+        if (!db) {
+          console.warn('Database not initialized. Using fallback storage.');
+          useFallbackStorage = true;
+          loadFeatures();
+          return;
+        }
+        
+        const transaction = db.transaction([featuresStoreName], 'readwrite');
+        const objectStore = transaction.objectStore(featuresStoreName);
+        const request = objectStore.delete(id);
+
+        request.onsuccess = function() {
+          loadFeatures();
+        };
+
+        request.onerror = function(event) {
+          console.error('Error deleting feature:', event.target.error);
+          useFallbackStorage = true;
+          loadFeatures();
+        };
+      } catch (error) {
+        console.error('Error deleting feature:', error);
+        updateStatus('Error deleting feature');
+      }
+    }
+
+    function updateFeaturesDisplay() {
+      try {
+        const featuresContainer = document.getElementById('featuresContainer');
+        featuresContainer.innerHTML = '';
+        
+        if (featuresList.length === 0) {
+          featuresContainer.innerHTML = '<div class="feature-card"><h3>No Features Available</h3><ul><li>Please add features from the admin panel</li></ul></div>';
+          return;
+        }
+        
+        featuresList.forEach(feature => {
+          const featureCard = document.createElement('div');
+          featureCard.className = 'feature-card';
+          
+          const pointsList = feature.points.map(point => `<li>${point}</li>`).join('');
+          
+          featureCard.innerHTML = `
+            <h3>${feature.title}</h3>
+            <ul>${pointsList}</ul>
+          `;
+          
+          featuresContainer.appendChild(featureCard);
+        });
+      } catch (error) {
+        console.error('Error updating features display:', error);
+        updateStatus('Error updating features display');
+      }
+    }
+
+    function updateFeaturesAdminDisplay() {
+      try {
+        const featuresListElement = document.getElementById('featuresList');
+        if (!featuresListElement) return;
+        
+        featuresListElement.innerHTML = '';
+        
+        featuresList.forEach(feature => {
+          const featureItem = document.createElement('div');
+          featureItem.className = 'file-item';
+          featureItem.innerHTML = `
+            <div style="flex: 1;">
+              <strong>${feature.title}</strong><br>
+              <small>${feature.points.length} points</small>
+            </div>
+            <button class="delete-btn" onclick="deleteFeature(${feature.id})">Delete</button>
+          `;
+          featuresListElement.appendChild(featureItem);
+        });
+      } catch (error) {
+        console.error('Error updating features admin display:', error);
+        updateStatus('Error updating features admin display');
+      }
+    }
+
+    // Interface Navigation Functions
+    function handleFeatures() {
+      try {
+        switchToFeatures();
+      } catch (error) {
+        console.error('Error handling features:', error);
+        updateStatus('Error accessing features');
+      }
+    }
+
+    function handleAboutCreator() {
+      try {
+        switchToCreator();
+      } catch (error) {
+        console.error('Error handling about creator:', error);
+        updateStatus('Error accessing about creator');
+      }
+    }
+
+    function switchToFeatures() {
+      try {
+        const firstInterface = document.getElementById('firstInterface');
+        const secondInterface = document.getElementById('secondInterface');
+        const socialInterface = document.getElementById('socialInterface');
+        const featuresInterface = document.getElementById('featuresInterface');
+        const creatorInterface = document.getElementById('creatorInterface');
+        
+        firstInterface.classList.remove('active');
+        firstInterface.classList.add('hidden');
+        secondInterface.classList.remove('active');
+        secondInterface.classList.add('hidden');
+        socialInterface.classList.remove('active');
+        socialInterface.classList.add('hidden');
+        creatorInterface.classList.remove('active');
+        creatorInterface.classList.add('hidden');
+        featuresInterface.classList.remove('hidden');
+        featuresInterface.classList.add('active');
+        
+        currentInterface = 'features';
+        stopRecognition();
+        updateStatus('Viewing features');
+      } catch (error) {
+        console.error('Error switching to features interface:', error);
+        updateStatus('Error switching to features interface');
+      }
+    }
+
+    function switchToCreator() {
+      try {
+        const firstInterface = document.getElementById('firstInterface');
+        const secondInterface = document.getElementById('secondInterface');
+        const socialInterface = document.getElementById('socialInterface');
+        const featuresInterface = document.getElementById('featuresInterface');
+        const creatorInterface = document.getElementById('creatorInterface');
+        
+        firstInterface.classList.remove('active');
+        firstInterface.classList.add('hidden');
+        secondInterface.classList.remove('active');
+        secondInterface.classList.add('hidden');
+        socialInterface.classList.remove('active');
+        socialInterface.classList.add('hidden');
+        featuresInterface.classList.remove('active');
+        featuresInterface.classList.add('hidden');
+        creatorInterface.classList.remove('hidden');
+        creatorInterface.classList.add('active');
+        
+        currentInterface = 'creator';
+        stopRecognition();
+        updateStatus('About creator');
+      } catch (error) {
+        console.error('Error switching to creator interface:', error);
+        updateStatus('Error switching to creator interface');
+      }
     }
 
     // Voice Recognition for Registration Form
@@ -1464,7 +2133,7 @@
     // Admin Panel Functions
     function showAdminFeature(feature) {
       // Hide all feature contents
-      const features = ['robot', 'social', 'qa', 'users'];
+      const features = ['robot', 'social', 'qa', 'features', 'users'];
       features.forEach(f => {
         document.getElementById(f + 'Feature').classList.remove('active');
         document.getElementById(f + 'Btn').classList.remove('active');
@@ -1489,38 +2158,9 @@
       }
     }
 
-    // Download User Data Function
+    // Updated Download User Data Function to use PDF
     function downloadUserData(userId) {
-      try {
-        const user = registeredUsers.find(u => u.id === userId);
-        if (!user) {
-          alert('User not found');
-          return;
-        }
-        
-        const userData = {
-          name: user.name,
-          phone: user.phone,
-          description: user.description,
-          registeredAt: user.registeredAt,
-          downloadedAt: new Date().toISOString()
-        };
-        
-        const dataStr = JSON.stringify(userData, null, 2);
-        const dataBlob = new Blob([dataStr], { type: 'application/json' });
-        
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(dataBlob);
-        link.download = `user_${user.name.replace(/\s+/g, '_')}_${user.id}.json`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        updateStatus(`Downloaded data for ${user.name}`);
-      } catch (error) {
-        console.error('Error downloading user data:', error);
-        updateStatus('Error downloading user data');
-      }
+      downloadUserDataAsPDF(userId);
     }
 
     function loadStoredFiles() {
@@ -1860,7 +2500,7 @@
               <small style="color: var(--text-muted);">Registered: ${new Date(user.registeredAt).toLocaleDateString()}</small>
             </div>
             <div style="display: flex; gap: 0.5rem;">
-              <button class="download-btn" onclick="downloadUserData(${user.id})">Download</button>
+              <button class="download-btn" onclick="downloadUserData(${user.id})">Download PDF</button>
               <button class="delete-btn" onclick="deleteRegisteredUser(${user.id})">Delete</button>
             </div>
           `;
@@ -2095,13 +2735,19 @@
         const firstInterface = document.getElementById('firstInterface');
         const secondInterface = document.getElementById('secondInterface');
         const socialInterface = document.getElementById('socialInterface');
+        const featuresInterface = document.getElementById('featuresInterface');
+        const creatorInterface = document.getElementById('creatorInterface');
         
         firstInterface.classList.remove('active');
         firstInterface.classList.add('hidden');
-        secondInterface.classList.remove('hidden');
-        secondInterface.classList.add('active');
         socialInterface.classList.remove('active');
         socialInterface.classList.add('hidden');
+        featuresInterface.classList.remove('active');
+        featuresInterface.classList.add('hidden');
+        creatorInterface.classList.remove('active');
+        creatorInterface.classList.add('hidden');
+        secondInterface.classList.remove('hidden');
+        secondInterface.classList.add('active');
         
         currentInterface = 'second';
         clearInterval(slideshowInterval);
@@ -2128,11 +2774,17 @@
         const firstInterface = document.getElementById('firstInterface');
         const secondInterface = document.getElementById('secondInterface');
         const socialInterface = document.getElementById('socialInterface');
+        const featuresInterface = document.getElementById('featuresInterface');
+        const creatorInterface = document.getElementById('creatorInterface');
         
         secondInterface.classList.remove('active');
         secondInterface.classList.add('hidden');
         socialInterface.classList.remove('active');
         socialInterface.classList.add('hidden');
+        featuresInterface.classList.remove('active');
+        featuresInterface.classList.add('hidden');
+        creatorInterface.classList.remove('active');
+        creatorInterface.classList.add('hidden');
         firstInterface.classList.remove('hidden');
         firstInterface.classList.add('active');
         
@@ -2151,12 +2803,18 @@
         const firstInterface = document.getElementById('firstInterface');
         const secondInterface = document.getElementById('secondInterface');
         const socialInterface = document.getElementById('socialInterface');
+        const featuresInterface = document.getElementById('featuresInterface');
+        const creatorInterface = document.getElementById('creatorInterface');
         const qrContainer = document.getElementById('qrContainer');
         
-        secondInterface.classList.remove('active');
-        secondInterface.classList.add('hidden');
         firstInterface.classList.remove('active');
         firstInterface.classList.add('hidden');
+        secondInterface.classList.remove('active');
+        secondInterface.classList.add('hidden');
+        featuresInterface.classList.remove('active');
+        featuresInterface.classList.add('hidden');
+        creatorInterface.classList.remove('active');
+        creatorInterface.classList.add('hidden');
         socialInterface.classList.remove('hidden');
         socialInterface.classList.add('active');
         qrContainer.style.display = 'none';
